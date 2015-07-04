@@ -14,6 +14,9 @@
 
 package at.quelltextlich.phabricator.conduit.testutil;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import junit.framework.TestCase;
 
 import org.easymock.Capture;
@@ -23,9 +26,6 @@ import org.junit.After;
 import org.junit.runner.RunWith;
 import org.powermock.api.easymock.PowerMock;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Test case with some support for automatically verifying mocks.
@@ -42,7 +42,7 @@ public abstract class MockingTestCase extends TestCase {
    * @return The mock control instance.
    */
   protected final IMocksControl createMockControl() {
-    IMocksControl mockControl = EasyMock.createControl();
+    final IMocksControl mockControl = EasyMock.createControl();
     assertTrue("Adding mock control failed", mockControls.add(mockControl));
     return mockControl;
   }
@@ -52,10 +52,12 @@ public abstract class MockingTestCase extends TestCase {
    *
    * Creates a mock and registers it in the list of created mocks, so it gets
    * treated automatically upon {@code replay} and {@code verify};
-   * @param toMock The class to create a mock for.
+   *
+   * @param toMock
+   *          The class to create a mock for.
    * @return The mock instance.
    */
-  protected final <T> T createMock(Class<T> toMock) {
+  protected final <T> T createMock(final Class<T> toMock) {
     return createMock(toMock, null);
   }
 
@@ -64,12 +66,16 @@ public abstract class MockingTestCase extends TestCase {
    *
    * Creates a mock and registers it in the list of created mocks, so it gets
    * treated automatically upon {@code replay} and {@code verify};
-   * @param toMock The class to create a mock for.
-   * @param control The mock control to create the mock on. If null, do not use
-   *    a specific control.
+   *
+   * @param toMock
+   *          The class to create a mock for.
+   * @param control
+   *          The mock control to create the mock on. If null, do not use a
+   *          specific control.
    * @return The mock instance.
    */
-  protected final <T> T createMock(Class<T> toMock, IMocksControl control) {
+  protected final <T> T createMock(final Class<T> toMock,
+      final IMocksControl control) {
     assertFalse("Mocks have already been set to replay", mocksReplayed);
     final T mock;
     if (control == null) {
@@ -78,8 +84,7 @@ public abstract class MockingTestCase extends TestCase {
       } else {
         mock = EasyMock.createMock(toMock);
       }
-      assertTrue("Adding " + toMock.getName() + " mock failed",
-          mocks.add(mock));
+      assertTrue("Adding " + toMock.getName() + " mock failed", mocks.add(mock));
     } else {
       mock = control.createMock(toMock);
     }
@@ -96,7 +101,7 @@ public abstract class MockingTestCase extends TestCase {
     } else {
       EasyMock.replay(mocks.toArray());
     }
-    for (IMocksControl mockControl : mockControls) {
+    for (final IMocksControl mockControl : mockControls) {
       mockControl.replay();
     }
     mocksReplayed = true;
@@ -105,9 +110,9 @@ public abstract class MockingTestCase extends TestCase {
   /**
    * Verify all registered mocks
    *
-   * This method is called automatically at the end of a test. Nevertheless,
-   * it is safe to also call it beforehand, if this better meets the
-   * verification part of a test.
+   * This method is called automatically at the end of a test. Nevertheless, it
+   * is safe to also call it beforehand, if this better meets the verification
+   * part of a test.
    */
   // As the PowerMock runner does not pass through runTest, we inject mock
   // verification through @After
@@ -121,7 +126,7 @@ public abstract class MockingTestCase extends TestCase {
       } else {
         EasyMock.verify(mocks.toArray());
       }
-      for (IMocksControl mockControl : mockControls) {
+      for (final IMocksControl mockControl : mockControls) {
         mockControl.verify();
       }
     }
@@ -132,7 +137,7 @@ public abstract class MockingTestCase extends TestCase {
     super.setUp();
 
     usePowerMock = false;
-    RunWith runWith = this.getClass().getAnnotation(RunWith.class);
+    final RunWith runWith = this.getClass().getAnnotation(RunWith.class);
     if (runWith != null) {
       usePowerMock = PowerMockRunner.class.isAssignableFrom(runWith.value());
     }

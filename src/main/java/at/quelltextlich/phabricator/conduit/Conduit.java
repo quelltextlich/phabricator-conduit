@@ -14,18 +14,6 @@
 
 package at.quelltextlich.phabricator.conduit;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
-import at.quelltextlich.phabricator.conduit.results.ConduitPing;
-import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
-import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,6 +22,17 @@ import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
+import at.quelltextlich.phabricator.conduit.results.ConduitPing;
+import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
+import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * Bindings for Phabricator's Conduit API
@@ -58,11 +57,12 @@ public class Conduit {
     this(baseUrl, null, null);
   }
 
-  public Conduit(final String baseUrl, final String username, final String certificate) {
-    this.conduitConnection = new ConduitConnection(baseUrl);
+  public Conduit(final String baseUrl, final String username,
+      final String certificate) {
+    conduitConnection = new ConduitConnection(baseUrl);
     this.username = username;
     this.certificate = certificate;
-    this.gson = new Gson();
+    gson = new Gson();
     resetSession();
   }
 
@@ -70,12 +70,12 @@ public class Conduit {
     sessionKey = null;
   }
 
-  public void setUsername(String username) {
+  public void setUsername(final String username) {
     this.username = username;
     resetSession();
   }
 
-  public void setCertificate(String certificate) {
+  public void setCertificate(final String certificate) {
     this.certificate = certificate;
     resetSession();
   }
@@ -87,15 +87,17 @@ public class Conduit {
    * <p/>
    * This method overrides the params' __conduit__ value.
    *
-   * @param params The Map to add session paramaters to
+   * @param params
+   *          The Map to add session paramaters to
    */
-  private void fillInSession(Map<String, Object> params) throws ConduitException {
+  private void fillInSession(final Map<String, Object> params)
+      throws ConduitException {
     if (sessionKey == null) {
       log.debug("Trying to start new session");
       conduitConnect();
     }
-    Map<String, Object> conduitParams = new HashMap<String, Object>();
-    conduitParams.put("sessionKey",sessionKey);
+    final Map<String, Object> conduitParams = new HashMap<String, Object>();
+    conduitParams.put("sessionKey", sessionKey);
     params.put("__conduit__", conduitParams);
   }
 
@@ -103,10 +105,11 @@ public class Conduit {
    * Runs the API's 'conduit.ping' method
    */
   public ConduitPing conduitPing() throws ConduitException {
-    JsonElement callResult = conduitConnection.call("conduit.ping");
-    JsonObject callResultWrapper = new JsonObject();
+    final JsonElement callResult = conduitConnection.call("conduit.ping");
+    final JsonObject callResultWrapper = new JsonObject();
     callResultWrapper.add("hostname", callResult);
-    ConduitPing result = gson.fromJson(callResultWrapper, ConduitPing.class);
+    final ConduitPing result = gson.fromJson(callResultWrapper,
+        ConduitPing.class);
     return result;
   }
 
@@ -114,44 +117,49 @@ public class Conduit {
    * Runs the API's 'conduit.connect' method
    */
   public ConduitConnect conduitConnect() throws ConduitException {
-    Map<String, Object> params = new HashMap<String, Object>();
+    final Map<String, Object> params = new HashMap<String, Object>();
     params.put("client", "at.quelltextlich.phabricator:phabricator-conduit");
     params.put("clientVersion", CONDUIT_VERSION);
     params.put("user", username);
 
-    // According to phabricator/src/applications/conduit/method/ConduitConnectConduitAPIMethod.php,
+    // According to
+    // phabricator/src/applications/conduit/method/ConduitConnectConduitAPIMethod.php,
     // the authToken needs to be an integer that is within 15 minutes of the
     // server's current timestamp.
-    long authToken = System.currentTimeMillis() / 1000;
+    final long authToken = System.currentTimeMillis() / 1000;
     params.put("authToken", authToken);
 
-    // According to phabricator/src/applications/conduit/method/ConduitConnectConduitAPIMethod.php,
+    // According to
+    // phabricator/src/applications/conduit/method/ConduitConnectConduitAPIMethod.php,
     // The signature is the SHA1 of the concatenation of the authToken (as
     // string) and the certificate (The long sequence of digits and lowercase
     // hat get written into ~/.arcrc after "arc install-certificate").
-    String authSignatureInput = Long.toString(authToken) + certificate;
+    final String authSignatureInput = Long.toString(authToken) + certificate;
 
     MessageDigest sha1;
     try {
       sha1 = MessageDigest.getInstance("SHA-1");
-    } catch (NoSuchAlgorithmException e) {
+    } catch (final NoSuchAlgorithmException e) {
       throw new ConduitException("Failed to compute authSignature, as no "
           + "SHA-1 algorithm implementation was found", e);
     }
     byte[] authSignatureRaw;
     try {
       authSignatureRaw = sha1.digest(authSignatureInput.getBytes("UTF-8"));
-    } catch (UnsupportedEncodingException e) {
+    } catch (final UnsupportedEncodingException e) {
       throw new ConduitException("Failed to convert authSignature input to "
           + "UTF-8 String", e);
     }
-    String authSignatureUC = DatatypeConverter.printHexBinary(authSignatureRaw);
-    String authSignature = authSignatureUC.toLowerCase();
+    final String authSignatureUC = DatatypeConverter
+        .printHexBinary(authSignatureRaw);
+    final String authSignature = authSignatureUC.toLowerCase();
     params.put("authSignature", authSignature);
 
-    JsonElement callResult = conduitConnection.call("conduit.connect", params);
+    final JsonElement callResult = conduitConnection.call("conduit.connect",
+        params);
 
-    ConduitConnect result = gson.fromJson(callResult, ConduitConnect.class);
+    final ConduitConnect result = gson.fromJson(callResult,
+        ConduitConnect.class);
     sessionKey = result.getSessionKey();
     return result;
   }
@@ -159,27 +167,31 @@ public class Conduit {
   /**
    * Runs the API's 'maniphest.Info' method
    */
-  public ManiphestInfo maniphestInfo(int taskId) throws ConduitException {
-    Map<String, Object> params = new HashMap<String, Object>();
+  public ManiphestInfo maniphestInfo(final int taskId) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
     fillInSession(params);
     params.put("task_id", taskId);
 
-    JsonElement callResult = conduitConnection.call("maniphest.info", params);
-    ManiphestInfo result = gson.fromJson(callResult, ManiphestInfo.class);
+    final JsonElement callResult = conduitConnection.call("maniphest.info",
+        params);
+    final ManiphestInfo result = gson.fromJson(callResult, ManiphestInfo.class);
     return result;
   }
 
   /**
    * Runs the API's 'maniphest.update' method
    */
-  public ManiphestUpdate maniphestUpdate(int taskId, String comment) throws ConduitException {
-    Map<String, Object> params = new HashMap<String, Object>();
+  public ManiphestUpdate maniphestUpdate(final int taskId, final String comment)
+      throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
     fillInSession(params);
     params.put("id", taskId);
     params.put("comments", comment);
 
-    JsonElement callResult = conduitConnection.call("maniphest.update", params);
-    ManiphestUpdate result = gson.fromJson(callResult, ManiphestUpdate.class);
+    final JsonElement callResult = conduitConnection.call("maniphest.update",
+        params);
+    final ManiphestUpdate result = gson.fromJson(callResult,
+        ManiphestUpdate.class);
     return result;
   }
 }

@@ -24,11 +24,14 @@ public class ConduitErrorException extends ConduitException {
   private final String errorCode;
   private final String errorInfo;
 
-  ConduitErrorException(String method, String errorCode, String errorInfo) {
-    super("Method '" + method + "' gave: " +errorCode +
-        ((errorInfo != null && !errorInfo.isEmpty())
-          ? (", " + errorInfo)
-          : ""));
+  ConduitErrorException(final String method, final String errorCode,
+      final String errorInfo) {
+    super("Method '"
+        + method
+        + "' gave: "
+        + errorCode
+        + ((errorInfo != null && !errorInfo.isEmpty()) ? (", " + errorInfo)
+            : ""));
     this.errorCode = errorCode;
     this.errorInfo = errorInfo;
   }

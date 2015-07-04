@@ -14,45 +14,45 @@
 
 package at.quelltextlich.phabricator.conduit.testutil;
 
-import at.quelltextlich.phabricator.conduit.testutil.log.LogUtil;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.After;
 
-import java.util.Iterator;
-import java.util.LinkedList;
+import at.quelltextlich.phabricator.conduit.testutil.log.LogUtil;
 
 public abstract class LoggingMockingTestCase extends MockingTestCase {
 
   private java.util.Collection<LoggingEvent> loggedEvents;
 
-  protected final void assertLogMessageContains(String needle, Level level) {
+  protected final void assertLogMessageContains(final String needle,
+      final Level level) {
     LoggingEvent hit = null;
-    Iterator<LoggingEvent> iter = loggedEvents.iterator();
+    final Iterator<LoggingEvent> iter = loggedEvents.iterator();
     while (hit == null && iter.hasNext()) {
-      LoggingEvent event = iter.next();
+      final LoggingEvent event = iter.next();
       if (event.getRenderedMessage().contains(needle)) {
         if (level == null || level.equals(event.getLevel())) {
           hit = event;
         }
       }
     }
-    assertNotNull("Could not find log message containing '" + needle + "'",
-        hit);
+    assertNotNull("Could not find log message containing '" + needle + "'", hit);
     assertTrue("Could not remove log message containing '" + needle + "'",
         loggedEvents.remove(hit));
   }
 
-  protected final void assertLogMessageContains(String needle) {
+  protected final void assertLogMessageContains(final String needle) {
     assertLogMessageContains(needle, null);
   }
 
-  protected final void assertLogThrowableMessageContains(String needle) {
+  protected final void assertLogThrowableMessageContains(final String needle) {
     LoggingEvent hit = null;
-    Iterator<LoggingEvent> iter = loggedEvents.iterator();
+    final Iterator<LoggingEvent> iter = loggedEvents.iterator();
     while (hit == null && iter.hasNext()) {
-      LoggingEvent event = iter.next();
+      final LoggingEvent event = iter.next();
 
       if (event.getThrowableInformation().getThrowable().toString()
           .contains(needle)) {
@@ -70,7 +70,7 @@ public abstract class LoggingMockingTestCase extends MockingTestCase {
   @After
   public final void assertNoUnassertedLogEvents() {
     if (loggedEvents.size() > 0) {
-      LoggingEvent event = loggedEvents.iterator().next();
+      final LoggingEvent event = loggedEvents.iterator().next();
       String msg = "Found untreated logged events. First one is:\n";
       msg += event.getRenderedMessage();
       if (event.getThrowableInformation() != null) {
@@ -90,7 +90,7 @@ public abstract class LoggingMockingTestCase extends MockingTestCase {
     // and we can improve later to allow tests to specify which loggers are
     // to check.
     String logName = this.getClass().getCanonicalName();
-    logName = logName.substring(0, logName.length()-4);
+    logName = logName.substring(0, logName.length() - 4);
     LogUtil.logToCollection(logName, loggedEvents);
   }
 

@@ -25,11 +25,11 @@ public class ConduitException extends Exception {
     super();
   }
 
-  public ConduitException(String message) {
+  public ConduitException(final String message) {
     super(message);
   }
 
-  public ConduitException(String message, Throwable e) {
+  public ConduitException(final String message, final Throwable e) {
     super(message, e);
   }
 }

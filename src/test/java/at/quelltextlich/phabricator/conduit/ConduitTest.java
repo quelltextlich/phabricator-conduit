@@ -19,21 +19,21 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.resetToStrict;
 import static org.powermock.api.easymock.PowerMock.expectNew;
 
+import java.util.Map;
+
 import org.easymock.Capture;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Map;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
-import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
 import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
 import at.quelltextlich.phabricator.conduit.results.ConduitPing;
 import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
 import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
+import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Conduit.class)
@@ -47,15 +47,14 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testConduitPingPass() throws Exception {
     mockConnection();
 
-    expect(connection.call("conduit.ping"))
-      .andReturn(new JsonPrimitive("foo"))
-      .once();
+    expect(connection.call("conduit.ping")).andReturn(new JsonPrimitive("foo"))
+        .once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL);
+    final Conduit conduit = new Conduit(URL);
 
-    ConduitPing actual = conduit.conduitPing();
+    final ConduitPing actual = conduit.conduitPing();
 
     assertEquals("Hostname does not match", "foo", actual.getHostname());
   }
@@ -63,20 +62,18 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testConduitPingConnectionFail() throws Exception {
     mockConnection();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    expect(connection.call("conduit.ping"))
-      .andThrow(conduitException)
-      .once();
+    expect(connection.call("conduit.ping")).andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL);
+    final Conduit conduit = new Conduit(URL);
 
     try {
       conduit.conduitPing();
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
   }
@@ -84,22 +81,21 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testConduitConnectPass() throws Exception {
     mockConnection();
 
-    JsonObject ret = new JsonObject();
+    final JsonObject ret = new JsonObject();
     ret.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCapture = createCapture();
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
-      .andReturn(ret)
-      .once();
+        .andReturn(ret).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
-    ConduitConnect conduitConnect = conduit.conduitConnect();
+    final ConduitConnect conduitConnect = conduit.conduitConnect();
 
-    Map<String, Object> params = paramsCapture.getValue();
+    final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", USERNAME, params.get("user"));
 
     assertEquals("Session keys don't match", "KeyFoo",
@@ -109,26 +105,25 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testConduitConnectConnectionFail() throws Exception {
     mockConnection();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = createCapture();
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
-      .andThrow(conduitException)
-      .once();
+        .andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
     try {
       conduit.conduitConnect();
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
 
-    Map<String, Object> params = paramsCapture.getValue();
+    final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", USERNAME, params.get("user"));
   }
 
@@ -137,34 +132,34 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     resetToStrict(connection);
 
-    JsonObject retConnect = new JsonObject();
+    final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
-    expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
-      .andReturn(retConnect)
-      .once();
+    expect(
+        connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
+        .andReturn(retConnect).once();
 
-    JsonObject retRelevant = new JsonObject();
+    final JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
-    expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
-    .andReturn(retRelevant)
-    .once();
+    expect(
+        connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
+        .andReturn(retRelevant).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
-    ManiphestInfo maniphestInfo = conduit.maniphestInfo(42);
+    final ManiphestInfo maniphestInfo = conduit.maniphestInfo(42);
 
-    Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
+    final Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
     assertEquals("Usernames do not match", USERNAME, paramsConnect.get("user"));
 
-    Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
+    final Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
     assertEquals("Task id is not set", 42, paramsRelevant.get("task_id"));
 
     assertEquals("ManiphestInfo's id does not match", 42, maniphestInfo.getId());
@@ -175,26 +170,25 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testManiphestInfoFailConnect() throws Exception {
     mockConnection();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = createCapture();
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
-      .andThrow(conduitException)
-      .once();
+        .andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
     try {
       conduit.maniphestInfo(42);
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
 
-    Map<String, Object> params = paramsCapture.getValue();
+    final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", USERNAME, params.get("user"));
 
     assertLogMessageContains("Trying to start new session");
@@ -205,38 +199,38 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     resetToStrict(connection);
 
-    JsonObject retConnect = new JsonObject();
+    final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
-    expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
-      .andReturn(retConnect)
-      .once();
+    expect(
+        connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
+        .andReturn(retConnect).once();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
-    expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
-      .andThrow(conduitException)
-      .once();
+    expect(
+        connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
+        .andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
     try {
       conduit.maniphestInfo(42);
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
 
-    Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
+    final Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
     assertEquals("Usernames do not match", USERNAME, paramsConnect.get("user"));
 
-    Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
+    final Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
     assertEquals("Task id is not set", 42, paramsRelevant.get("task_id"));
 
     assertLogMessageContains("Trying to start new session");
@@ -247,37 +241,38 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     resetToStrict(connection);
 
-    JsonObject retConnect = new JsonObject();
+    final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
-    expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
-      .andReturn(retConnect)
-      .once();
+    expect(
+        connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
+        .andReturn(retConnect).once();
 
-    JsonObject retRelevant = new JsonObject();
+    final JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
-    expect(connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
-    .andReturn(retRelevant)
-    .once();
+    expect(
+        connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
+        .andReturn(retRelevant).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
-    ManiphestUpdate maniphestUpdate = conduit.maniphestUpdate(42, "foo");
+    final ManiphestUpdate maniphestUpdate = conduit.maniphestUpdate(42, "foo");
 
-    Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
+    final Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
     assertEquals("Usernames do not match", USERNAME, paramsConnect.get("user"));
 
-    Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
+    final Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
     assertEquals("Task id is not set", 42, paramsRelevant.get("id"));
 
-    assertEquals("ManiphestInfo's id does not match", 42, maniphestUpdate.getId());
+    assertEquals("ManiphestInfo's id does not match", 42,
+        maniphestUpdate.getId());
 
     assertLogMessageContains("Trying to start new session");
   }
@@ -285,26 +280,25 @@ public class ConduitTest extends LoggingMockingTestCase {
   public void testManiphestUpdateFailConnect() throws Exception {
     mockConnection();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = createCapture();
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
-      .andThrow(conduitException)
-      .once();
+        .andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
     try {
       conduit.maniphestUpdate(42, "foo");
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
 
-    Map<String, Object> params = paramsCapture.getValue();
+    final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", USERNAME, params.get("user"));
 
     assertLogMessageContains("Trying to start new session");
@@ -315,38 +309,38 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     resetToStrict(connection);
 
-    JsonObject retConnect = new JsonObject();
+    final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
-    expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
-      .andReturn(retConnect)
-      .once();
+    expect(
+        connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
+        .andReturn(retConnect).once();
 
-    ConduitException conduitException = new ConduitException();
+    final ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
-    expect(connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
-      .andThrow(conduitException)
-      .once();
+    expect(
+        connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
+        .andThrow(conduitException).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
     try {
       conduit.maniphestUpdate(42, "foo");
       fail("no exception got thrown");
-    } catch (ConduitException e) {
+    } catch (final ConduitException e) {
       assertSame(conduitException, e);
     }
 
-    Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
+    final Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
     assertEquals("Usernames do not match", USERNAME, paramsConnect.get("user"));
 
-    Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
+    final Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
     assertEquals("Task id is not set", 42, paramsRelevant.get("id"));
 
     assertLogMessageContains("Trying to start new session");
@@ -357,46 +351,46 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     resetToStrict(connection);
 
-    JsonObject retConnect = new JsonObject();
+    final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
-    expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
-      .andReturn(retConnect)
-      .once();
+    expect(
+        connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
+        .andReturn(retConnect).once();
 
-    JsonObject retRelevant = new JsonObject();
+    final JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
+    final Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
-    expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
-    .andReturn(retRelevant)
-    .once();
+    expect(
+        connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
+        .andReturn(retRelevant).once();
 
     replayMocks();
 
-    Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
+    final Conduit conduit = new Conduit(URL, USERNAME, CERTIFICATE);
 
-    ConduitConnect conduitConnect = conduit.conduitConnect();
-    ManiphestInfo maniphestInfo = conduit.maniphestInfo(42);
+    final ConduitConnect conduitConnect = conduit.conduitConnect();
+    final ManiphestInfo maniphestInfo = conduit.maniphestInfo(42);
 
-    Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
+    final Map<String, Object> paramsConnect = paramsCaptureConnect.getValue();
     assertEquals("Usernames do not match", USERNAME, paramsConnect.get("user"));
 
-    Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
+    final Map<String, Object> paramsRelevant = paramsCaptureRelevant.getValue();
     assertEquals("Task id is not set", 42, paramsRelevant.get("task_id"));
 
-    assertEquals("Session keys don't match", "KeyFoo", conduitConnect.getSessionKey());
+    assertEquals("Session keys don't match", "KeyFoo",
+        conduitConnect.getSessionKey());
 
     assertEquals("ManiphestInfo's id does not match", 42, maniphestInfo.getId());
   }
 
   private void mockConnection() throws Exception {
-    connection = createMock(ConduitConnection.class);;
-    expectNew(ConduitConnection.class, URL)
-      .andReturn(connection)
-      .once();
+    connection = createMock(ConduitConnection.class);
+    ;
+    expectNew(ConduitConnection.class, URL).andReturn(connection).once();
   }
 }

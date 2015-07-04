@@ -19,6 +19,7 @@ import com.google.gson.JsonElement;
  * Models the generic wrapper for API calls
  * <p/>
  * JSON looks like:
+ *
  * <pre>
  * {
  *   "result": SOME JSON OBJECT,

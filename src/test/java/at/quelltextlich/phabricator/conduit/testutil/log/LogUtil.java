@@ -14,17 +14,17 @@
 
 package at.quelltextlich.phabricator.conduit.testutil.log;
 
+import java.util.Collection;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 
-import java.util.Collection;
-
 public class LogUtil {
-  public static CollectionAppender logToCollection(String logName,
-      Collection<LoggingEvent> collection) {
-    Logger log = LogManager.getLogger(logName);
-    CollectionAppender listAppender = new CollectionAppender(collection);
+  public static CollectionAppender logToCollection(final String logName,
+      final Collection<LoggingEvent> collection) {
+    final Logger log = LogManager.getLogger(logName);
+    final CollectionAppender listAppender = new CollectionAppender(collection);
     log.removeAllAppenders();
     log.addAppender(listAppender);
     return listAppender;

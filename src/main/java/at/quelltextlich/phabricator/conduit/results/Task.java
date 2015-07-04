@@ -19,6 +19,7 @@ import com.google.gson.JsonElement;
  * Models the result for API methods returning Task information
  * <p/>
  * JSON looks like:
+ *
  * <pre>
  * {
  *   "id":"48",

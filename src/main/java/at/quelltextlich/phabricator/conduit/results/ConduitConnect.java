@@ -17,6 +17,7 @@ package at.quelltextlich.phabricator.conduit.results;
  * Models the result for a call to conduit.connect
  * <p/>
  * JSON looks like:
+ *
  * <pre>
  * {
  *   "connectionID":4,
@@ -24,6 +25,7 @@ package at.quelltextlich.phabricator.conduit.results;
  *   "userPHID":"PHID-USER-h4n52fq2kt2v3a2qjyqh"
  * }
  * </pre>
+ *
  * @author christian
  *
  */

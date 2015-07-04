@@ -14,23 +14,23 @@
 
 package at.quelltextlich.phabricator.conduit.testutil.log;
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.spi.LoggingEvent;
-
 import java.util.Collection;
 import java.util.LinkedList;
+
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.spi.LoggingEvent;
 
 /**
  * Log4j appender that logs into a list
  */
 public class CollectionAppender extends AppenderSkeleton {
-  private Collection<LoggingEvent> events;
+  private final Collection<LoggingEvent> events;
 
   public CollectionAppender() {
     events = new LinkedList<LoggingEvent>();
   }
 
-  public CollectionAppender(Collection<LoggingEvent> events) {
+  public CollectionAppender(final Collection<LoggingEvent> events) {
     this.events = events;
   }
 
@@ -40,8 +40,8 @@ public class CollectionAppender extends AppenderSkeleton {
   }
 
   @Override
-  protected void append(LoggingEvent event) {
-    if (! events.add(event)) {
+  protected void append(final LoggingEvent event) {
+    if (!events.add(event)) {
       throw new RuntimeException("Could not append event " + event);
     }
   }

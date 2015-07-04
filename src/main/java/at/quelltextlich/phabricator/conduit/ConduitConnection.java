@@ -14,10 +14,10 @@
 
 package at.quelltextlich.phabricator.conduit;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-
-import at.quelltextlich.phabricator.conduit.results.CallCapsule;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -29,11 +29,10 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import at.quelltextlich.phabricator.conduit.results.CallCapsule;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
 /**
  * Abstracts the connection to Conduit API
@@ -55,7 +54,7 @@ class ConduitConnection {
   /**
    * Gives a cached HttpClient
    * <p/>
-   * If  no cached HttpClient exists, a new one is spawned.
+   * If no cached HttpClient exists, a new one is spawned.
    *
    * @return the cached CloseableHttpClient
    */
@@ -70,52 +69,57 @@ class ConduitConnection {
   /**
    * Call the given Conduit method without parameters
    *
-   * @param method The name of the method that should get called
+   * @param method
+   *          The name of the method that should get called
    * @return The call's result, if there has been no error
    * @throws Exception
    */
-  JsonElement call(String method) throws ConduitException {
+  JsonElement call(final String method) throws ConduitException {
     return call(method, new HashMap<String, Object>());
   }
 
   /**
    * Calls a conduit method with some parameters
    *
-   * @param method The name of the method that should get called
-   * @param params A map of parameters to pass to the call
+   * @param method
+   *          The name of the method that should get called
+   * @param params
+   *          A map of parameters to pass to the call
    * @return The call's result, if there has been no error
    * @throws Exception
    */
-  JsonElement call(String method, Map<String, Object> params) throws ConduitException {
-    String methodUrl = apiUrlBase + method;
+  JsonElement call(final String method, final Map<String, Object> params)
+      throws ConduitException {
+    final String methodUrl = apiUrlBase + method;
 
-    HttpPost httppost = new HttpPost(methodUrl);
+    final HttpPost httppost = new HttpPost(methodUrl);
 
+    final String json = gson.toJson(params);
 
-    String json = gson.toJson(params);
-
-    log.trace("Calling phabricator method " + method
-        + " with the parameters " + json );
-    httppost.setEntity(new StringEntity("params=" + json, StandardCharsets.UTF_8));
+    log.trace("Calling phabricator method " + method + " with the parameters "
+        + json);
+    httppost.setEntity(new StringEntity("params=" + json,
+        StandardCharsets.UTF_8));
 
     CloseableHttpResponse response;
     try {
       response = getClient().execute(httppost);
-    } catch (IOException e) {
+    } catch (final IOException e) {
       throw new ConduitException("Could not execute Phabricator API call", e);
     }
     try {
       log.trace("Phabricator HTTP response status: " + response.getStatusLine());
-      HttpEntity entity = response.getEntity();
+      final HttpEntity entity = response.getEntity();
       String entityString;
       try {
         entityString = EntityUtils.toString(entity);
-      } catch (IOException e) {
+      } catch (final IOException e) {
         throw new ConduitException("Could not read the API response", e);
       }
 
       log.trace("Phabricator response " + entityString);
-      CallCapsule callCapsule = gson.fromJson(entityString, CallCapsule.class);
+      final CallCapsule callCapsule = gson.fromJson(entityString,
+          CallCapsule.class);
       log.trace("callCapsule.result: " + callCapsule.getResult());
       log.trace("callCapsule.error_code: " + callCapsule.getErrorCode());
       log.trace("callCapsule.error_info: " + callCapsule.getErrorInfo());
@@ -128,7 +132,7 @@ class ConduitConnection {
     } finally {
       try {
         response.close();
-      } catch (IOException e) {
+      } catch (final IOException e) {
         throw new ConduitException("Could not close API response", e);
       }
     }

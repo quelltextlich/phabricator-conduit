@@ -16,8 +16,8 @@ package at.quelltextlich.phabricator.conduit.results;
 /**
  * Models the result for a call to conduit.ping
  * <p/>
- * JSON is just the hostname of the instance. We wrap it in a proper object
- * to make it a nicer Java citizen.
+ * JSON is just the hostname of the instance. We wrap it in a proper object to
+ * make it a nicer Java citizen.
  */
 public class ConduitPing {
   private String hostname;

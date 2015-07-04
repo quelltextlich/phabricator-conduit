@@ -17,6 +17,7 @@ package at.quelltextlich.phabricator.conduit.results;
  * Models the result for a call to maniphest.update
  * <p/>
  * JSON looks like:
+ *
  * <pre>
  * {
  *   "id":"48",
