@@ -87,7 +87,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject ret = new JsonObject();
     ret.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCapture = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
       .andReturn(ret)
@@ -111,7 +111,7 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
       .andThrow(conduitException)
@@ -140,7 +140,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
       .andReturn(retConnect)
@@ -149,7 +149,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
     expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
     .andReturn(retRelevant)
@@ -177,7 +177,7 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
       .andThrow(conduitException)
@@ -208,7 +208,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
       .andReturn(retConnect)
@@ -216,7 +216,7 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
     expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
       .andThrow(conduitException)
@@ -250,7 +250,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
       .andReturn(retConnect)
@@ -259,7 +259,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
     expect(connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
     .andReturn(retRelevant)
@@ -287,7 +287,7 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCapture = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCapture)))
       .andThrow(conduitException)
@@ -318,7 +318,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
       .andReturn(retConnect)
@@ -326,7 +326,7 @@ public class ConduitTest extends LoggingMockingTestCase {
 
     ConduitException conduitException = new ConduitException();
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
     expect(connection.call(eq("maniphest.update"), capture(paramsCaptureRelevant)))
       .andThrow(conduitException)
@@ -360,7 +360,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    Capture<Map<String, Object>> paramsCaptureConnect = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureConnect = createCapture();
 
     expect(connection.call(eq("conduit.connect"), capture(paramsCaptureConnect)))
       .andReturn(retConnect)
@@ -369,7 +369,7 @@ public class ConduitTest extends LoggingMockingTestCase {
     JsonObject retRelevant = new JsonObject();
     retRelevant.add("id", new JsonPrimitive(42));
 
-    Capture<Map<String, Object>> paramsCaptureRelevant = new Capture<Map<String, Object>>();
+    Capture<Map<String, Object>> paramsCaptureRelevant = createCapture();
 
     expect(connection.call(eq("maniphest.info"), capture(paramsCaptureRelevant)))
     .andReturn(retRelevant)
