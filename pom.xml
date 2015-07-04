@@ -1,0 +1,283 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <name>Phabricator Conduit Java Connector</name>
+    <description>Java connector to Phabricator's conduit</description>
+    <url>https://github.com/quelltextlich/phabricator-conduit</url>
+
+    <groupId>at.quelltextlich.phabricator</groupId>
+    <artifactId>phabricator-conduit</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.7</java.version>
+
+        <plugin.compiler.version>3.2</plugin.compiler.version>
+        <plugin.jar.version>2.4</plugin.jar.version>
+        <plugin.source.version>2.4</plugin.source.version>
+        <plugin.javadoc.version>2.10.3</plugin.javadoc.version>
+        <plugin.gpg.version>1.6</plugin.gpg.version>
+        <plugin.release.version>2.5</plugin.release.version>
+        <plugin.deploy.version>2.8.2</plugin.deploy.version>
+        <plugin.enforcer.version>1.4</plugin.enforcer.version>
+        <plugin.git_commit_id.version>2.1.12</plugin.git_commit_id.version>
+
+        <junit.version>4.12</junit.version>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>Apache License, version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://git.quelltextlich.at/phabricator/phabricator-conduit</connection>
+        <developerConnection>scm:git:file:///home/christian/sources/quelltextlich/phabricator-conduit</developerConnection>
+        <url>https://github.com/quelltextlich/phabricator-conduit</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Christian Aistleitner</name>
+            <email>christian@quelltextlich.at</email>
+            <organization>quelltextlich e.U.</organization>
+            <organizationUrl>http://quelltextlich.at/</organizationUrl>
+        </developer>
+    </developers>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>sonatype-oss-repository-hosting</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>sonatype-oss-repository-hosting</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${plugin.compiler.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.source.version}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-source-jars</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>${plugin.javadoc.version}</version>
+                    <executions>
+                        <execution>
+                            <id>generate-javadoc-jars</id>
+                            <goals>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${plugin.gpg.version}</version>
+                    <executions>
+                        <execution>
+                            <id>sign-artifacts</id>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                            <configuration>
+                                <keyname>${gpg.keyname}</keyname>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${plugin.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>pl.project13.maven</groupId>
+                    <artifactId>git-commit-id-plugin</artifactId>
+                    <version>${plugin.git_commit_id.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>revision</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <useNativeGit>true</useNativeGit>
+                        <runOnlyOnce>true</runOnlyOnce>
+                        <skipPoms>false</skipPoms>
+                        <dateFormat>yyyy-MM-dd'T'HH:mm:ssZ</dateFormat>
+                        <gitDescribe>
+                            <forceLongFormat>true</forceLongFormat>
+                            <dirty>-dirty</dirty>
+                            <tags>true</tags>
+                        </gitDescribe>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${plugin.release.version}</version>
+                <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <goals>deploy</goals>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
+                    <!-- The following is an ugly hack. Basically, we want
+                    to force activation of the 'with-hidden-modules' profile
+                    when releasing. Using <releaseProfiles> doesn't work, as
+                    it's only for release:perform.
+                    <arguments>-Prelease,with-hidden-modules</arguments>
+                    doesn't work either, as the updating of pom would still
+                    not pull in the hidden modules when transforming
+                    poms. Only when doing the test build, hidden modules
+                    would get pulled in. But now they'd still reference the
+                    old pom, and we get a misleading errer about it.
+
+                    To overcome this issue, we only active the release
+                    profile, and in the release profile we enforce that the
+                    with-hidden-modules profile is active.
+
+                    Thereby, we at least get a descriptive error message
+                    when we forget to activate the with-hidden-modules
+                    profile upon releasing.
+                    -->
+                    <releaseProfiles>release</releaseProfiles>
+                    <arguments>-Prelease</arguments>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-jar-plugin</artifactId>
+	        <version>${plugin.jar.version}</version>
+	        <configuration>
+	            <archive>
+	                <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+	                </manifest>
+                        <manifestEntries>
+                            <Implementation-Build>${git.commit.id.describe}</Implementation-Build>
+                        </manifestEntries>
+	            </archive>
+	        </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <inherited>false</inherited>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>${plugin.enforcer.version}</version>
+                        <executions>
+                            <execution>
+                                <id>enforce-all-profiles-are-activated</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireActiveProfile>
+                                            <profiles>with-hidden-modules</profiles>
+                                            <message>'with-hidden-modules' profile is not active. Please re-prepare the release after adding '-Prelease,with-hidden-modules' to the arguments</message>
+                                        </requireActiveProfile>
+                                    </rules>
+                                    <fail>true</fail>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>with-hidden-modules</id>
+            <modules>
+                <!-- <module>foo</module> -->
+            </modules>
+        </profile>
+    </profiles>
+</project>
