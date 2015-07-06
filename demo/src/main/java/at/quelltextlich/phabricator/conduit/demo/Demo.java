@@ -119,7 +119,17 @@ public class Demo {
 
       logStart("conduit.ping (anonymous)"); // --------------------------------
 
-      ConduitPing conduitPing = conduit.conduitPing();
+      ConduitPing conduitPing = conduit.getConduitModule().ping();
+
+      // The line above looks Java-ish by using a getter.
+      //
+      // If you prefer a Phabricator-ish look, you could instead use
+      //
+      //   ConduitPing conduitPing = conduit.conduit.ping();
+      //
+      // which more closely resembles the called "conduit.ping" Phabricator
+      // Conduit method.
+
       stdout.println("conduit.ping returned hostname: "
           + conduitPing.getHostname());
 
