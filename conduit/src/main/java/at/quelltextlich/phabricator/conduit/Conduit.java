@@ -45,7 +45,7 @@ public class Conduit {
 
   public static final int CONDUIT_VERSION = 1;
 
-  private final ConduitConnection conduitConnection;
+  private final Connection connection;
   private final Gson gson;
 
   private String username;
@@ -59,7 +59,7 @@ public class Conduit {
 
   public Conduit(final String baseUrl, final String username,
       final String certificate) {
-    conduitConnection = new ConduitConnection(baseUrl);
+    connection = new Connection(baseUrl);
     this.username = username;
     this.certificate = certificate;
     gson = new Gson();
@@ -105,7 +105,7 @@ public class Conduit {
    * Runs the API's 'conduit.ping' method
    */
   public ConduitPing conduitPing() throws ConduitException {
-    final JsonElement callResult = conduitConnection.call("conduit.ping");
+    final JsonElement callResult = connection.call("conduit.ping");
     final JsonObject callResultWrapper = new JsonObject();
     callResultWrapper.add("hostname", callResult);
     final ConduitPing result = gson.fromJson(callResultWrapper,
@@ -155,8 +155,7 @@ public class Conduit {
     final String authSignature = authSignatureUC.toLowerCase();
     params.put("authSignature", authSignature);
 
-    final JsonElement callResult = conduitConnection.call("conduit.connect",
-        params);
+    final JsonElement callResult = connection.call("conduit.connect", params);
 
     final ConduitConnect result = gson.fromJson(callResult,
         ConduitConnect.class);
@@ -172,8 +171,7 @@ public class Conduit {
     fillInSession(params);
     params.put("task_id", taskId);
 
-    final JsonElement callResult = conduitConnection.call("maniphest.info",
-        params);
+    final JsonElement callResult = connection.call("maniphest.info", params);
     final ManiphestInfo result = gson.fromJson(callResult, ManiphestInfo.class);
     return result;
   }
@@ -188,8 +186,7 @@ public class Conduit {
     params.put("id", taskId);
     params.put("comments", comment);
 
-    final JsonElement callResult = conduitConnection.call("maniphest.update",
-        params);
+    final JsonElement callResult = connection.call("maniphest.update", params);
     final ManiphestUpdate result = gson.fromJson(callResult,
         ManiphestUpdate.class);
     return result;

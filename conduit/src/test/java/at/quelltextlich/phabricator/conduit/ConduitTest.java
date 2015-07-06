@@ -42,7 +42,7 @@ public class ConduitTest extends LoggingMockingTestCase {
   private final static String USERNAME = "usernameFoo";
   private final static String CERTIFICATE = "certificateFoo";
 
-  private ConduitConnection connection;
+  private Connection connection;
 
   public void testConduitPingPass() throws Exception {
     mockConnection();
@@ -389,8 +389,8 @@ public class ConduitTest extends LoggingMockingTestCase {
   }
 
   private void mockConnection() throws Exception {
-    connection = createMock(ConduitConnection.class);
+    connection = createMock(Connection.class);
     ;
-    expectNew(ConduitConnection.class, URL).andReturn(connection).once();
+    expectNew(Connection.class, URL).andReturn(connection).once();
   }
 }

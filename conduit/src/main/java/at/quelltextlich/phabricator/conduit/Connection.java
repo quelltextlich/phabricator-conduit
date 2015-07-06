@@ -37,7 +37,7 @@ import com.google.gson.JsonElement;
 /**
  * Abstracts the connection to Conduit API
  */
-class ConduitConnection {
+class Connection {
   private static final Logger log = LoggerFactory.getLogger(Conduit.class);
 
   private final String apiUrlBase;
@@ -45,7 +45,7 @@ class ConduitConnection {
 
   private CloseableHttpClient client;
 
-  ConduitConnection(final String baseUrl) {
+  Connection(final String baseUrl) {
     apiUrlBase = baseUrl.replaceAll("/+$", "") + "/api/";
     gson = new Gson();
     client = null;
