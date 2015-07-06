@@ -13,19 +13,66 @@
 // limitations under the License.
 package at.quelltextlich.phabricator.conduit;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
 
 public abstract class ModuleTestCase extends LoggingMockingTestCase {
   public Connection connection;
-  public SessionHandler sessionHandler;
+  public SessionHandlerStub sessionHandler;
 
   @Override
   public void setUp() throws Exception {
     super.setUp();
 
     connection = createMock(Connection.class);
-    sessionHandler = createMock(SessionHandler.class);
+    sessionHandler = new SessionHandlerStub();
+  }
+
+  void assertHasSessionKey(final Map<String, Object> params) {
+    final Object conduitValue = params.get("__conduit__");
+    assertNotNull(params.toString(), conduitValue);
+    assertTrue("Value ot \"__conduit__\" is not a Map",
+        conduitValue instanceof Map<?, ?>);
+    @SuppressWarnings("unchecked")
+    final Map<String, Object> __conduit__ = (Map<String, Object>) conduitValue;
+    assertEquals("Filled in sessions not equal", sessionHandler.sessionKey,
+        __conduit__.get("sessionKey"));
   }
 
   protected abstract Module getModule();
+
+  class SessionHandlerStub implements SessionHandler {
+    private final String sessionKey = "sessionKeyFoo";
+
+    private ConduitException nextException = null;
+
+    public void failNextFillingIn(final ConduitException e) {
+      nextException = e;
+    }
+
+    @Override
+    public void fillInSession(final Map<String, Object> params)
+        throws ConduitException {
+      assertNotNull("The passed parameters are uninitialized", params);
+
+      if (nextException == null) {
+        final Object conduitParamsObj = params.get("__conduit__");
+        if (conduitParamsObj == null) {
+          final Map<String, Object> conduitParams = new HashMap<String, Object>();
+          conduitParams.put("sessionKey", sessionKey);
+          params.put("__conduit__", conduitParams);
+        } else {
+          if (conduitParamsObj instanceof Map<?, ?>) {
+            @SuppressWarnings("unchecked")
+            final Map<String, Object> conduitParams = (Map<String, Object>) conduitParamsObj;
+            conduitParams.put("sessionKey", sessionKey);
+          }
+        }
+      } else {
+        throw nextException;
+      }
+    }
+  }
 }

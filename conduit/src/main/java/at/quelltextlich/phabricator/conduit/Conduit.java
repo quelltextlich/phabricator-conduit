@@ -21,11 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
-import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
-import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
-
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 
 /**
  * Bindings for Phabricator's Conduit API
@@ -37,19 +32,19 @@ public class Conduit implements SessionHandler {
   private static final Logger log = LoggerFactory.getLogger(Conduit.class);
 
   private final Connection connection;
-  private final Gson gson;
 
   private String sessionKey;
 
   public final ConduitModule conduit;
+  public final ManiphestModule maniphest;
 
   public Conduit(final String baseUrl, final String username,
       final String certificate) {
     connection = new Connection(baseUrl);
-    gson = new Gson();
     resetSession();
 
     conduit = new ConduitModule(connection, this, username, certificate);
+    maniphest = new ManiphestModule(connection, this);
   }
 
   private void resetSession() {
@@ -89,31 +84,11 @@ public class Conduit implements SessionHandler {
   }
 
   /**
-   * Runs the API's 'maniphest.Info' method
+   * Gets the current ManiphestModule
+   *
+   * @return Gets the current ManiphestModule
    */
-  public ManiphestInfo maniphestInfo(final int taskId) throws ConduitException {
-    final Map<String, Object> params = new HashMap<String, Object>();
-    fillInSession(params);
-    params.put("task_id", taskId);
-
-    final JsonElement callResult = connection.call("maniphest.info", params);
-    final ManiphestInfo result = gson.fromJson(callResult, ManiphestInfo.class);
-    return result;
-  }
-
-  /**
-   * Runs the API's 'maniphest.update' method
-   */
-  public ManiphestUpdate maniphestUpdate(final int taskId, final String comment)
-      throws ConduitException {
-    final Map<String, Object> params = new HashMap<String, Object>();
-    fillInSession(params);
-    params.put("id", taskId);
-    params.put("comments", comment);
-
-    final JsonElement callResult = connection.call("maniphest.update", params);
-    final ManiphestUpdate result = gson.fromJson(callResult,
-        ManiphestUpdate.class);
-    return result;
+  public ManiphestModule getManiphestModule() {
+    return maniphest;
   }
 }

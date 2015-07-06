@@ -150,7 +150,7 @@ public class Demo {
 
       stdout.println("Fetching info about task T" + taskId + "...");
 
-      ManiphestInfo maniphestInfo = conduit.maniphestInfo(taskId);
+      ManiphestInfo maniphestInfo = conduit.getManiphestModule().info(taskId);
 
       stdout.println("Here it is:");
       stdout.println("  * title: " + maniphestInfo.getTitle());
@@ -170,12 +170,12 @@ public class Demo {
       if (askPermission("May I add a comment saying 'Test comment' to task T"
           + taskId + "?")) {
         stdout.println("Adding 'Test comment' to task T" + taskId + "...");
-        ManiphestUpdate maniphestUpdate = conduit.maniphestUpdate(taskId,
+        ManiphestUpdate maniphestUpdate = conduit.getManiphestModule().update(taskId,
             "Test comment");
         stdout.println("Done.");
 
         stdout.println("Fetching fresh info about task T" + taskId + "...");
-        maniphestInfo = conduit.maniphestInfo(taskId);
+        maniphestInfo = conduit.getManiphestModule().info(taskId);
         stdout.println("New task modification date is " + new Date(
             Long.parseLong(maniphestUpdate.getDateModified()) * 1000));
       }
