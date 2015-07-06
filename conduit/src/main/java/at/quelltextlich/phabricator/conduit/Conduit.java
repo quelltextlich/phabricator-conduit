@@ -39,7 +39,7 @@ import com.google.gson.JsonObject;
  * <p/>
  * This class is not thread-safe.
  */
-public class Conduit {
+public class Conduit implements SessionHandler {
 
   private static final Logger log = LoggerFactory.getLogger(Conduit.class);
 
@@ -90,7 +90,8 @@ public class Conduit {
    * @param params
    *          The Map to add session paramaters to
    */
-  private void fillInSession(final Map<String, Object> params)
+  @Override
+  public void fillInSession(final Map<String, Object> params)
       throws ConduitException {
     if (sessionKey == null) {
       log.debug("Trying to start new session");
@@ -132,7 +133,8 @@ public class Conduit {
     // According to
     // phabricator/src/applications/conduit/method/ConduitConnectConduitAPIMethod.php,
     // The signature is the SHA1 of the concatenation of the authToken (as
-    // string) and the certificate (The long sequence of digits and lowercase
+    // string) and the certificate (The long sequence of digits and
+    // lowercase
     // hat get written into ~/.arcrc after "arc install-certificate").
     final String authSignatureInput = Long.toString(authToken) + certificate;
 
