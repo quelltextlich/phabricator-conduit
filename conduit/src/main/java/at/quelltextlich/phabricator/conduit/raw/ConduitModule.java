@@ -47,12 +47,12 @@ public class ConduitModule extends Module {
   /**
    * Runs the API's 'conduit.ping' method
    */
-  public ConduitPing ping() throws ConduitException {
+  public PingResult ping() throws ConduitException {
     final JsonElement callResult = connection.call("conduit.ping");
     final JsonObject callResultWrapper = new JsonObject();
     callResultWrapper.add("hostname", callResult);
-    final ConduitPing result = gson.fromJson(callResultWrapper,
-        ConduitPing.class);
+    final PingResult result = gson.fromJson(callResultWrapper,
+        PingResult.class);
     return result;
   }
 
@@ -62,7 +62,7 @@ public class ConduitModule extends Module {
    * JSON is just the hostname of the instance. We wrap it in a proper object to
    * make it a nicer Java citizen.
    */
-  public static class ConduitPing {
+  public static class PingResult {
     private String hostname;
 
     public String getHostname() {
@@ -73,7 +73,7 @@ public class ConduitModule extends Module {
   /**
    * Runs the API's 'conduit.connect' method
    */
-  public ConduitConnect connect() throws ConduitException {
+  public ConnectResult connect() throws ConduitException {
     final Map<String, Object> params = new HashMap<String, Object>();
     params.put("client", "at.quelltextlich.phabricator:phabricator-conduit");
     params.put("clientVersion", CONDUIT_VERSION);
@@ -115,8 +115,8 @@ public class ConduitModule extends Module {
 
     final JsonElement callResult = connection.call("conduit.connect", params);
 
-    final ConduitConnect result = gson.fromJson(callResult,
-        ConduitConnect.class);
+    final ConnectResult result = gson.fromJson(callResult,
+        ConnectResult.class);
     return result;
   }
 
@@ -133,7 +133,7 @@ public class ConduitModule extends Module {
    * }
    * </pre>
    */
-  public static class ConduitConnect {
+  public static class ConnectResult {
     private int connectionID;
     private String sessionKey;
     private String userPHID;

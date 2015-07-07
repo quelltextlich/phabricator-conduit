@@ -120,17 +120,17 @@ public class Connection {
       }
 
       log.trace("Phabricator response " + entityString);
-      final CallCapsule callCapsule = gson.fromJson(entityString,
-          CallCapsule.class);
-      log.trace("callCapsule.result: " + callCapsule.getResult());
-      log.trace("callCapsule.error_code: " + callCapsule.getErrorCode());
-      log.trace("callCapsule.error_info: " + callCapsule.getErrorInfo());
-      if (callCapsule.getErrorCode() != null
-          || callCapsule.getErrorInfo() != null) {
-        throw new ConduitErrorException(method, callCapsule.getErrorCode(),
-            callCapsule.getErrorInfo());
+      final CallResult callResult = gson.fromJson(entityString,
+          CallResult.class);
+      log.trace("callCapsule.result: " + callResult.getResult());
+      log.trace("callCapsule.error_code: " + callResult.getErrorCode());
+      log.trace("callCapsule.error_info: " + callResult.getErrorInfo());
+      if (callResult.getErrorCode() != null
+          || callResult.getErrorInfo() != null) {
+        throw new ConduitErrorException(method, callResult.getErrorCode(),
+            callResult.getErrorInfo());
       }
-      return callCapsule.getResult();
+      return callResult.getResult();
     } finally {
       try {
         response.close();
@@ -153,7 +153,7 @@ public class Connection {
    * }
    * </pre>
    */
-  public static class CallCapsule {
+  public static class CallResult {
     private JsonElement result;
     private String error_code;
     private String error_info;

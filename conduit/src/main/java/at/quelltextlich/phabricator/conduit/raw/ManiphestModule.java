@@ -33,13 +33,13 @@ public class ManiphestModule extends Module {
   /**
    * Runs the API's 'maniphest.Info' method
    */
-  public ManiphestInfo info(final int taskId) throws ConduitException {
+  public InfoResult info(final int taskId) throws ConduitException {
     final Map<String, Object> params = new HashMap<String, Object>();
     sessionHandler.fillInSession(params);
     params.put("task_id", taskId);
 
     final JsonElement callResult = connection.call("maniphest.info", params);
-    final ManiphestInfo result = gson.fromJson(callResult, ManiphestInfo.class);
+    final InfoResult result = gson.fromJson(callResult, InfoResult.class);
     return result;
   }
 
@@ -77,13 +77,13 @@ public class ManiphestModule extends Module {
    * }
    * </pre>
    */
-  public static class ManiphestInfo extends Task {
+  public static class InfoResult extends TaskResult {
   }
 
   /**
    * Runs the API's 'maniphest.update' method
    */
-  public ManiphestUpdate update(final int taskId, final String comment)
+  public UpdateResult update(final int taskId, final String comment)
       throws ConduitException {
     final Map<String, Object> params = new HashMap<String, Object>();
     sessionHandler.fillInSession(params);
@@ -91,8 +91,8 @@ public class ManiphestModule extends Module {
     params.put("comments", comment);
 
     final JsonElement callResult = connection.call("maniphest.update", params);
-    final ManiphestUpdate result = gson.fromJson(callResult,
-        ManiphestUpdate.class);
+    final UpdateResult result = gson.fromJson(callResult,
+        UpdateResult.class);
     return result;
   }
 
@@ -130,11 +130,11 @@ public class ManiphestModule extends Module {
    * }
    * </pre>
    */
-  public static class ManiphestUpdate extends Task {
+  public static class UpdateResult extends TaskResult {
   }
 
   /**
-   * Models the result for API methods returning Task information
+   * Models the result for API methods returning TaskResult information
    * <p/>
    * JSON looks like:
    *
@@ -167,7 +167,7 @@ public class ManiphestModule extends Module {
    * }
    * </pre>
    */
-  public static class Task {
+  public static class TaskResult {
     private int id;
     private String phid;
     private String authorPHID;

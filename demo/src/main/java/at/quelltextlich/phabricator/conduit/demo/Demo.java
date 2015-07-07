@@ -121,19 +121,19 @@ public class Demo {
 
       logStart("conduit.ping (anonymous)"); // --------------------------------
 
-      ConduitModule.ConduitPing conduitPing = conduit.getConduitModule().ping();
+      ConduitModule.PingResult pingResult = conduit.getConduitModule().ping();
 
       // The line above looks Java-ish by using a getter.
       //
       // If you prefer a Phabricator-ish look, you could instead use
       //
-      //   ConduitPing conduitPing = conduit.conduit.ping();
+      //   PingResult conduitPing = conduit.conduit.ping();
       //
       // which more closely resembles the called "conduit.ping" Phabricator
       // Conduit method.
 
       stdout.println("conduit.ping returned hostname: "
-          + conduitPing.getHostname());
+          + pingResult.getHostname());
 
 
 
@@ -152,18 +152,18 @@ public class Demo {
 
       stdout.println("Fetching info about task T" + taskId + "...");
 
-      ManiphestModule.ManiphestInfo maniphestInfo = conduit.getManiphestModule().info(taskId);
+      ManiphestModule.InfoResult infoResult = conduit.getManiphestModule().info(taskId);
 
       stdout.println("Here it is:");
-      stdout.println("  * title: " + maniphestInfo.getTitle());
+      stdout.println("  * title: " + infoResult.getTitle());
       stdout.println("  * created on: " + new Date(
-          Long.parseLong(maniphestInfo.getDateCreated()) * 1000));
+          Long.parseLong(infoResult.getDateCreated()) * 1000));
       stdout.println("  * modified on: " + new Date(
-          Long.parseLong(maniphestInfo.getDateModified()) * 1000));
-      stdout.println("  * priority: " + maniphestInfo.getPriority());
-      stdout.println("  * uri: " + maniphestInfo.getUri());
+          Long.parseLong(infoResult.getDateModified()) * 1000));
+      stdout.println("  * priority: " + infoResult.getPriority());
+      stdout.println("  * uri: " + infoResult.getUri());
       stdout.println("(Much more information is available. See the "
-          + "ManiphestInfo class)");
+          + "InfoResult class)");
 
 
 
@@ -172,14 +172,14 @@ public class Demo {
       if (askPermission("May I add a comment saying 'Test comment' to task T"
           + taskId + "?")) {
         stdout.println("Adding 'Test comment' to task T" + taskId + "...");
-        ManiphestModule.ManiphestUpdate maniphestUpdate = conduit.getManiphestModule().update(taskId,
+        ManiphestModule.UpdateResult updateResult = conduit.getManiphestModule().update(taskId,
             "Test comment");
         stdout.println("Done.");
 
         stdout.println("Fetching fresh info about task T" + taskId + "...");
-        maniphestInfo = conduit.getManiphestModule().info(taskId);
+        infoResult = conduit.getManiphestModule().info(taskId);
         stdout.println("New task modification date is " + new Date(
-            Long.parseLong(maniphestUpdate.getDateModified()) * 1000));
+            Long.parseLong(updateResult.getDateModified()) * 1000));
       }
 
 

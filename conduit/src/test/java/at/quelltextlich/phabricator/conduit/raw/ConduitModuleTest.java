@@ -35,7 +35,7 @@ public class ConduitModuleTest extends ModuleTestCase {
 
     final ConduitModule module = getModule();
 
-    final ConduitModule.ConduitPing actual = module.ping();
+    final ConduitModule.PingResult actual = module.ping();
 
     assertEquals("Hostname does not match", "foo", actual.getHostname());
   }
@@ -69,13 +69,13 @@ public class ConduitModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ConduitModule module = getModule();
-    final ConduitModule.ConduitConnect conduitConnect = module.connect();
+    final ConduitModule.ConnectResult connectResult = module.connect();
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", "userFoo", params.get("user"));
 
     assertEquals("Session keys don't match", "KeyFoo",
-        conduitConnect.getSessionKey());
+        connectResult.getSessionKey());
   }
 
   public void testConduitConnectConnectionFail() throws Exception {

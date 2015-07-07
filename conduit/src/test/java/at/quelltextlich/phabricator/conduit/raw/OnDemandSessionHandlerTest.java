@@ -35,11 +35,11 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionEmptyParams() throws ConduitException {
-    final ConduitModule.ConduitConnect conduitConnect = new ConduitModule.ConduitConnect();
-    conduitConnect.setSessionKey("sessionKeyFoo");
+    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult();
+    connectResult.setSessionKey("sessionKeyFoo");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);
-    expect(conduitModule.connect()).andReturn(conduitConnect);
+    expect(conduitModule.connect()).andReturn(connectResult);
 
     final Map<String, Object> params = new HashMap<String, Object>();
 
@@ -56,11 +56,11 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionReuseSessios() throws ConduitException {
-    final ConduitModule.ConduitConnect conduitConnect = new ConduitModule.ConduitConnect();
-    conduitConnect.setSessionKey("sessionKeyFoo");
+    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult();
+    connectResult.setSessionKey("sessionKeyFoo");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);
-    expect(conduitModule.connect()).andReturn(conduitConnect).once();
+    expect(conduitModule.connect()).andReturn(connectResult).once();
 
     final Map<String, Object> params1 = new HashMap<String, Object>();
     final Map<String, Object> params2 = new HashMap<String, Object>();

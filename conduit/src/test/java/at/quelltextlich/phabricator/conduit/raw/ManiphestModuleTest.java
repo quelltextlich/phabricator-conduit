@@ -39,13 +39,13 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestModule.ManiphestInfo maniphestInfo = module.info(42);
+    final ManiphestModule.InfoResult infoResult = module.info(42);
 
     final Map<String, Object> params = paramsCapture.getValue();
-    assertEquals("Task id is not set", 42, params.get("task_id"));
+    assertEquals("TaskResult id is not set", 42, params.get("task_id"));
     assertHasSessionKey(params);
 
-    assertEquals("ManiphestInfo's id does not match", 42, maniphestInfo.getId());
+    assertEquals("InfoResult's id does not match", 42, infoResult.getId());
   }
 
   public void testInfoFailSession() throws Exception {
@@ -85,7 +85,7 @@ public class ManiphestModuleTest extends ModuleTestCase {
     }
 
     final Map<String, Object> params = paramsCapture.getValue();
-    assertEquals("Task id is not set", 42, params.get("task_id"));
+    assertEquals("TaskResult id is not set", 42, params.get("task_id"));
     assertHasSessionKey(params);
   }
 
@@ -104,15 +104,15 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestModule.ManiphestUpdate maniphestUpdate = module.update(42,
+    final ManiphestModule.UpdateResult updateResult = module.update(42,
         "foo");
 
     final Map<String, Object> params = paramsCapture.getValue();
-    assertEquals("Task id is not set", 42, params.get("id"));
+    assertEquals("TaskResult id is not set", 42, params.get("id"));
     assertHasSessionKey(params);
 
-    assertEquals("ManiphestUpdate's id does not match", 42,
-        maniphestUpdate.getId());
+    assertEquals("UpdateResult's id does not match", 42,
+        updateResult.getId());
   }
 
   public void testUpdateFailSession() throws Exception {
@@ -150,7 +150,7 @@ public class ManiphestModuleTest extends ModuleTestCase {
     }
 
     final Map<String, Object> paramsRelevant = paramsCapture.getValue();
-    assertEquals("Task id is not set", 42, paramsRelevant.get("id"));
+    assertEquals("TaskResult id is not set", 42, paramsRelevant.get("id"));
   }
 
   @Override

@@ -52,9 +52,9 @@ public class OnDemandSessionHandler implements SessionHandler {
     }
     if (sessionKey == null) {
       log.debug("Trying to start new session");
-      final ConduitModule.ConduitConnect conduitConnect = conduitModule
+      final ConduitModule.ConnectResult connectResult = conduitModule
           .connect();
-      sessionKey = conduitConnect.getSessionKey();
+      sessionKey = connectResult.getSessionKey();
     }
     final Map<String, Object> conduitParams = new HashMap<String, Object>();
     conduitParams.put("sessionKey", sessionKey);
