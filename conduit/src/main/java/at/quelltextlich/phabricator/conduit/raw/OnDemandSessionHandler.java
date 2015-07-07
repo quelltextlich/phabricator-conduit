@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.raw;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +19,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
 
 public class OnDemandSessionHandler implements SessionHandler {

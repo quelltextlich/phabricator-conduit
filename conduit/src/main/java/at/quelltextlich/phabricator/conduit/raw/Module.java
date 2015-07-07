@@ -11,21 +11,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.raw;
 
-import java.util.Map;
+import at.quelltextlich.phabricator.conduit.bare.Connection;
 
-public interface SessionHandler {
-  /**
-   * Adds session parameters to a Map of parameters
-   * <p/>
-   * If there is no active session, a new one is opened
-   * <p/>
-   * This method overrides the params' __conduit__ value.
-   *
-   * @param params
-   *          The Map to add session paramaters to
-   */
-  public void fillInSession(final Map<String, Object> params)
-      throws ConduitException;
+import com.google.gson.Gson;
+
+public class Module {
+  protected Connection connection;
+  protected SessionHandler sessionHandler;
+  protected Gson gson;
+
+  public Module(final Connection connection, final SessionHandler sessionHandler) {
+    this.connection = connection;
+    this.sessionHandler = sessionHandler;
+    gson = new Gson();
+  }
 }

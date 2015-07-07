@@ -22,8 +22,8 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionHandlerFilter;
 
-import at.quelltextlich.phabricator.conduit.Conduit;
-import at.quelltextlich.phabricator.conduit.ConduitFactory;
+import at.quelltextlich.phabricator.conduit.raw.Conduit;
+import at.quelltextlich.phabricator.conduit.raw.ConduitFactory;
 import at.quelltextlich.phabricator.conduit.results.ConduitPing;
 import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
 import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;

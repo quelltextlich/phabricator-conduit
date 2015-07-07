@@ -24,7 +24,7 @@ public class ConduitErrorException extends ConduitException {
   private final String errorCode;
   private final String errorInfo;
 
-  ConduitErrorException(final String method, final String errorCode,
+  public ConduitErrorException(final String method, final String errorCode,
       final String errorInfo) {
     super("Method '"
         + method

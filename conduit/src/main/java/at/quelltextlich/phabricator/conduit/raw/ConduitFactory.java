@@ -11,7 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.raw;
+
+import at.quelltextlich.phabricator.conduit.bare.Connection;
 
 public class ConduitFactory {
   public static Conduit createConduit(final String baseUrl,

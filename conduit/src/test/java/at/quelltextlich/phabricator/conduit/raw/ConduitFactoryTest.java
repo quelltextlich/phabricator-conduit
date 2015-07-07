@@ -11,18 +11,17 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.raw;
 
-import com.google.gson.Gson;
+import at.quelltextlich.phabricator.conduit.raw.Conduit;
+import at.quelltextlich.phabricator.conduit.raw.ConduitFactory;
+import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
 
-public class Module {
-  protected Connection connection;
-  protected SessionHandler sessionHandler;
-  protected Gson gson;
+public class ConduitFactoryTest extends LoggingMockingTestCase {
+  public void testCreateConduit() {
+    Conduit conduit = ConduitFactory.createConduit("urlFoo", "userBar", "certBaz");
 
-  public Module(final Connection connection, final SessionHandler sessionHandler) {
-    this.connection = connection;
-    this.sessionHandler = sessionHandler;
-    gson = new Gson();
+    assertNotNull("conduit module not initialized", conduit.conduit);
+    assertNotNull("maniphest module not initialized", conduit.maniphest);
   }
 }

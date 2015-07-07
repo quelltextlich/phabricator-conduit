@@ -11,15 +11,23 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.raw;
 
-import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
+import java.util.Map;
 
-public class ConduitFactoryTest extends LoggingMockingTestCase {
-  public void testCreateConduit() {
-    Conduit conduit = ConduitFactory.createConduit("urlFoo", "userBar", "certBaz");
+import at.quelltextlich.phabricator.conduit.ConduitException;
 
-    assertNotNull("conduit module not initialized", conduit.conduit);
-    assertNotNull("maniphest module not initialized", conduit.maniphest);
-  }
+public interface SessionHandler {
+  /**
+   * Adds session parameters to a Map of parameters
+   * <p/>
+   * If there is no active session, a new one is opened
+   * <p/>
+   * This method overrides the params' __conduit__ value.
+   *
+   * @param params
+   *          The Map to add session paramaters to
+   */
+  public void fillInSession(final Map<String, Object> params)
+      throws ConduitException;
 }

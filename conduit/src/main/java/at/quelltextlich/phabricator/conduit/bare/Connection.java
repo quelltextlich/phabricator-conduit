@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package at.quelltextlich.phabricator.conduit;
+package at.quelltextlich.phabricator.conduit.bare;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +29,9 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import at.quelltextlich.phabricator.conduit.ConduitErrorException;
+import at.quelltextlich.phabricator.conduit.ConduitException;
+import at.quelltextlich.phabricator.conduit.raw.Conduit;
 import at.quelltextlich.phabricator.conduit.results.CallCapsule;
 
 import com.google.gson.Gson;
@@ -37,7 +40,7 @@ import com.google.gson.JsonElement;
 /**
  * Abstracts the connection to Conduit API
  */
-class Connection {
+public class Connection {
   private static final Logger log = LoggerFactory.getLogger(Conduit.class);
 
   private final String apiUrlBase;
@@ -45,7 +48,7 @@ class Connection {
 
   private CloseableHttpClient client;
 
-  Connection(final String baseUrl) {
+  public Connection(final String baseUrl) {
     apiUrlBase = baseUrl.replaceAll("/+$", "") + "/api/";
     gson = new Gson();
     client = null;
@@ -74,7 +77,7 @@ class Connection {
    * @return The call's result, if there has been no error
    * @throws Exception
    */
-  JsonElement call(final String method) throws ConduitException {
+  public JsonElement call(final String method) throws ConduitException {
     return call(method, new HashMap<String, Object>());
   }
 
@@ -88,7 +91,7 @@ class Connection {
    * @return The call's result, if there has been no error
    * @throws Exception
    */
-  JsonElement call(final String method, final Map<String, Object> params)
+  public JsonElement call(final String method, final Map<String, Object> params)
       throws ConduitException {
     final String methodUrl = apiUrlBase + method;
 
