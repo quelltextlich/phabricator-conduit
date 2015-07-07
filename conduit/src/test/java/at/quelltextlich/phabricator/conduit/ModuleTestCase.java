@@ -16,9 +16,7 @@ package at.quelltextlich.phabricator.conduit;
 import java.util.HashMap;
 import java.util.Map;
 
-import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
-
-public abstract class ModuleTestCase extends LoggingMockingTestCase {
+public abstract class ModuleTestCase extends SessionTestCase {
   public Connection connection;
   public SessionHandlerStub sessionHandler;
 
@@ -31,14 +29,7 @@ public abstract class ModuleTestCase extends LoggingMockingTestCase {
   }
 
   void assertHasSessionKey(final Map<String, Object> params) {
-    final Object conduitValue = params.get("__conduit__");
-    assertNotNull(params.toString(), conduitValue);
-    assertTrue("Value ot \"__conduit__\" is not a Map",
-        conduitValue instanceof Map<?, ?>);
-    @SuppressWarnings("unchecked")
-    final Map<String, Object> __conduit__ = (Map<String, Object>) conduitValue;
-    assertEquals("Filled in sessions not equal", sessionHandler.sessionKey,
-        __conduit__.get("sessionKey"));
+    assertHasSessionKey(sessionHandler.sessionKey, params);
   }
 
   protected abstract Module getModule();

@@ -14,26 +14,13 @@
 
 package at.quelltextlich.phabricator.conduit;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
-
 /**
  * Bindings for Phabricator's Conduit API
  * <p/>
  * This class is not thread-safe.
  */
-public class Conduit implements SessionHandler {
-
-  private static final Logger log = LoggerFactory.getLogger(Conduit.class);
-
+public class Conduit {
   private final Connection connection;
-
-  private String sessionKey;
 
   public final ConduitModule conduit;
   public final ManiphestModule maniphest;
@@ -41,37 +28,14 @@ public class Conduit implements SessionHandler {
   public Conduit(final String baseUrl, final String username,
       final String certificate) {
     connection = new Connection(baseUrl);
-    resetSession();
 
-    conduit = new ConduitModule(connection, this, username, certificate);
-    maniphest = new ManiphestModule(connection, this);
-  }
+    final OnDemandSessionHandler sessionHandler = new OnDemandSessionHandler();
 
-  private void resetSession() {
-    sessionKey = null;
-  }
+    conduit = new ConduitModule(connection, sessionHandler, username,
+        certificate);
+    sessionHandler.setConduitModule(conduit);
 
-  /**
-   * Adds session parameters to a Map of parameters
-   * <p/>
-   * If there is no active session, a new one is opened
-   * <p/>
-   * This method overrides the params' __conduit__ value.
-   *
-   * @param params
-   *          The Map to add session paramaters to
-   */
-  @Override
-  public void fillInSession(final Map<String, Object> params)
-      throws ConduitException {
-    if (sessionKey == null) {
-      log.debug("Trying to start new session");
-      final ConduitConnect conduitConnect = conduit.connect();
-      sessionKey = conduitConnect.getSessionKey();
-    }
-    final Map<String, Object> conduitParams = new HashMap<String, Object>();
-    conduitParams.put("sessionKey", sessionKey);
-    params.put("__conduit__", conduitParams);
+    maniphest = new ManiphestModule(connection, sessionHandler);
   }
 
   /**

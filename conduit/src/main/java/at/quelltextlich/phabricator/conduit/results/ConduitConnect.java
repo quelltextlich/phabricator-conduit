@@ -42,6 +42,10 @@ public class ConduitConnect {
     return sessionKey;
   }
 
+  public void setSessionKey(String sessionKey) {
+    this.sessionKey = sessionKey;
+  }
+
   public String getUserPhId() {
     return userPHID;
   }
