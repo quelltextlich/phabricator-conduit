@@ -18,8 +18,6 @@ import java.util.Map;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.bare.Connection;
-import at.quelltextlich.phabricator.conduit.raw.Module;
-import at.quelltextlich.phabricator.conduit.raw.SessionHandler;
 
 public abstract class ModuleTestCase extends SessionTestCase {
   public Connection connection;

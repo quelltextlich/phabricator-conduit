@@ -23,8 +23,6 @@ import javax.xml.bind.DatatypeConverter;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.bare.Connection;
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
-import at.quelltextlich.phabricator.conduit.results.ConduitPing;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -56,6 +54,20 @@ public class ConduitModule extends Module {
     final ConduitPing result = gson.fromJson(callResultWrapper,
         ConduitPing.class);
     return result;
+  }
+
+  /**
+   * Models the result for a call to conduit.ping
+   * <p/>
+   * JSON is just the hostname of the instance. We wrap it in a proper object to
+   * make it a nicer Java citizen.
+   */
+  public static class ConduitPing {
+    private String hostname;
+
+    public String getHostname() {
+      return hostname;
+    }
   }
 
   /**
@@ -108,4 +120,38 @@ public class ConduitModule extends Module {
     return result;
   }
 
+  /**
+   * Models the result for a call to conduit.connect
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "connectionID":4,
+   *   "sessionKey":"5jhpmsb3xgm1eupp7snzym7mtebndd7v4vv4ub6n",
+   *   "userPHID":"PHID-USER-h4n52fq2kt2v3a2qjyqh"
+   * }
+   * </pre>
+   */
+  public static class ConduitConnect {
+    private int connectionID;
+    private String sessionKey;
+    private String userPHID;
+
+    public int getConnectionId() {
+      return connectionID;
+    }
+
+    public String getSessionKey() {
+      return sessionKey;
+    }
+
+    public void setSessionKey(final String sessionKey) {
+      this.sessionKey = sessionKey;
+    }
+
+    public String getUserPhId() {
+      return userPHID;
+    }
+  }
 }

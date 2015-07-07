@@ -13,13 +13,12 @@
 // limitations under the License.
 package at.quelltextlich.phabricator.conduit.raw;
 
-import at.quelltextlich.phabricator.conduit.raw.Conduit;
-import at.quelltextlich.phabricator.conduit.raw.ConduitFactory;
 import at.quelltextlich.phabricator.conduit.testutil.LoggingMockingTestCase;
 
 public class ConduitFactoryTest extends LoggingMockingTestCase {
   public void testCreateConduit() {
-    Conduit conduit = ConduitFactory.createConduit("urlFoo", "userBar", "certBaz");
+    final Conduit conduit = ConduitFactory.createConduit("urlFoo", "userBar",
+        "certBaz");
 
     assertNotNull("conduit module not initialized", conduit.conduit);
     assertNotNull("maniphest module not initialized", conduit.maniphest);

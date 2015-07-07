@@ -22,9 +22,6 @@ import java.util.Map;
 import org.easymock.Capture;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
-import at.quelltextlich.phabricator.conduit.raw.ManiphestModule;
-import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
-import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -42,7 +39,7 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestInfo maniphestInfo = module.info(42);
+    final ManiphestModule.ManiphestInfo maniphestInfo = module.info(42);
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Task id is not set", 42, params.get("task_id"));
@@ -107,7 +104,8 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestUpdate maniphestUpdate = module.update(42, "foo");
+    final ManiphestModule.ManiphestUpdate maniphestUpdate = module.update(42,
+        "foo");
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Task id is not set", 42, params.get("id"));

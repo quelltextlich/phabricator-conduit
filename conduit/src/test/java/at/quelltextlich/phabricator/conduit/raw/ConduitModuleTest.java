@@ -22,9 +22,6 @@ import java.util.Map;
 import org.easymock.Capture;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
-import at.quelltextlich.phabricator.conduit.raw.ConduitModule;
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
-import at.quelltextlich.phabricator.conduit.results.ConduitPing;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -38,7 +35,7 @@ public class ConduitModuleTest extends ModuleTestCase {
 
     final ConduitModule module = getModule();
 
-    final ConduitPing actual = module.ping();
+    final ConduitModule.ConduitPing actual = module.ping();
 
     assertEquals("Hostname does not match", "foo", actual.getHostname());
   }
@@ -72,7 +69,7 @@ public class ConduitModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ConduitModule module = getModule();
-    final ConduitConnect conduitConnect = module.connect();
+    final ConduitModule.ConduitConnect conduitConnect = module.connect();
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", "userFoo", params.get("user"));

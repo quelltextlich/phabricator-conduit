@@ -19,10 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
-import at.quelltextlich.phabricator.conduit.raw.ConduitModule;
-import at.quelltextlich.phabricator.conduit.raw.OnDemandSessionHandler;
-import at.quelltextlich.phabricator.conduit.raw.SessionHandler;
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
 
 public class OnDemandSessionHandlerTest extends SessionTestCase {
   public void testFillInSessionWithoutConduit() {
@@ -39,7 +35,7 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionEmptyParams() throws ConduitException {
-    final ConduitConnect conduitConnect = new ConduitConnect();
+    final ConduitModule.ConduitConnect conduitConnect = new ConduitModule.ConduitConnect();
     conduitConnect.setSessionKey("sessionKeyFoo");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);
@@ -60,7 +56,7 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionReuseSessios() throws ConduitException {
-    final ConduitConnect conduitConnect = new ConduitConnect();
+    final ConduitModule.ConduitConnect conduitConnect = new ConduitModule.ConduitConnect();
     conduitConnect.setSessionKey("sessionKeyFoo");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);

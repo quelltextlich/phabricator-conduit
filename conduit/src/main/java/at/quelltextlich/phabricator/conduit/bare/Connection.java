@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import at.quelltextlich.phabricator.conduit.ConduitErrorException;
 import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.raw.Conduit;
-import at.quelltextlich.phabricator.conduit.results.CallCapsule;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -138,6 +137,37 @@ public class Connection {
       } catch (final IOException e) {
         throw new ConduitException("Could not close API response", e);
       }
+    }
+  }
+
+  /**
+   * Models the generic wrapper for API calls
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "result": SOME JSON OBJECT,
+   *   "error_code":null,
+   *   "error_info":null
+   * }
+   * </pre>
+   */
+  public static class CallCapsule {
+    private JsonElement result;
+    private String error_code;
+    private String error_info;
+
+    public JsonElement getResult() {
+      return result;
+    }
+
+    public String getErrorCode() {
+      return error_code;
+    }
+
+    public String getErrorInfo() {
+      return error_info;
     }
   }
 }

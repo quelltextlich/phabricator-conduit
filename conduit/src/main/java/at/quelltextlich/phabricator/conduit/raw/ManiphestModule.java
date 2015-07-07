@@ -18,8 +18,6 @@ import java.util.Map;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.bare.Connection;
-import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
-import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
 
 import com.google.gson.JsonElement;
 
@@ -46,6 +44,43 @@ public class ManiphestModule extends Module {
   }
 
   /**
+   * Models the result for a call to maniphest.info
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "id":"48",
+   *   "phid":"PHID-TASK-pemd324eosnymq3tdkyo",
+   *   "authorPHID":"PHID-USER-na3one2sht11aone",
+   *   "ownerPHID":null,
+   *   "ccPHIDs":[
+   *     "PHID-USER-h4n62fq2kt2v3a2qjyqh"
+   *   ],
+   *   "status":"open",
+   *   "statusName":"Open",
+   *   "isClosed":false,
+   *   "priority": "Needs Triage",
+   *   "priorityColor":"violet",
+   *   "title":"QChris test task",
+   *   "description":"",
+   *   "projectPHIDs":[],
+   *   "uri":"https://phabricator.local/T47",
+   *   "auxiliary":{
+   *     "std:maniphest:security_topic":"default",
+   *     "isdc:sprint:storypoints":null
+   *   },
+   *   "objectName":"T47",
+   *   "dateCreated":"1413484594",
+   *   "dateModified":1413549869,
+   *   "dependsOnTaskPHIDs":[]
+   * }
+   * </pre>
+   */
+  public static class ManiphestInfo extends Task {
+  }
+
+  /**
    * Runs the API's 'maniphest.update' method
    */
   public ManiphestUpdate update(final int taskId, final String comment)
@@ -59,5 +94,174 @@ public class ManiphestModule extends Module {
     final ManiphestUpdate result = gson.fromJson(callResult,
         ManiphestUpdate.class);
     return result;
+  }
+
+  /**
+   * Models the result for a call to maniphest.update
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "id":"48",
+   *   "phid":"PHID-TASK-pemd324eosnymq3tdkyo",
+   *   "authorPHID":"PHID-USER-na3one2sht11aone",
+   *   "ownerPHID":null,
+   *   "ccPHIDs":[
+   *     "PHID-USER-h4n62fq2kt2v3a2qjyqh"
+   *   ],
+   *   "status":"open",
+   *   "statusName":"Open",
+   *   "isClosed":false,
+   *   "priority": "Needs Triage",
+   *   "priorityColor":"violet",
+   *   "title":"QChris test task",
+   *   "description":"",
+   *   "projectPHIDs":[],
+   *   "uri":"https://phabricator.local/T47",
+   *   "auxiliary":{
+   *     "std:maniphest:security_topic":"default",
+   *     "isdc:sprint:storypoints":null
+   *   },
+   *   "objectName":"T47",
+   *   "dateCreated":"1413484594",
+   *   "dateModified":1413549869,
+   *   "dependsOnTaskPHIDs":[]
+   * }
+   * </pre>
+   */
+  public static class ManiphestUpdate extends Task {
+  }
+
+  /**
+   * Models the result for API methods returning Task information
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "id":"48",
+   *   "phid":"PHID-TASK-pemd324eosnymq3tdkyo",
+   *   "authorPHID":"PHID-USER-na3one2sht11aone",
+   *   "ownerPHID":null,
+   *   "ccPHIDs":[
+   *     "PHID-USER-h4n62fq2kt2v3a2qjyqh"
+   *   ],
+   *   "status":"open",
+   *   "statusName":"Open",
+   *   "isClosed":false,
+   *   "priority": "Needs Triage",
+   *   "priorityColor":"violet",
+   *   "title":"QChris test task",
+   *   "description":"",
+   *   "projectPHIDs":[],
+   *   "uri":"https://phabricator.local/T47",
+   *   "auxiliary":{
+   *     "std:maniphest:security_topic":"default",
+   *     "isdc:sprint:storypoints":null
+   *   },
+   *   "objectName":"T47",
+   *   "dateCreated":"1413484594",
+   *   "dateModified":1413549869,
+   *   "dependsOnTaskPHIDs":[]
+   * }
+   * </pre>
+   */
+  public static class Task {
+    private int id;
+    private String phid;
+    private String authorPHID;
+    private String ownerPHID;
+    private JsonElement ccPHIDs;
+    private String status;
+    private String statusName;
+    private Boolean isClosed;
+    private String priority;
+    private String priorityColor;
+    private String title;
+    private String description;
+    private JsonElement projectPHIDs;
+    private String uri;
+    private JsonElement auxiliary;
+    private String objectName;
+    private String dateCreated;
+    private String dateModified;
+    private JsonElement dependsOnTaskPHIDs;
+
+    public int getId() {
+      return id;
+    }
+
+    public String getPhid() {
+      return phid;
+    }
+
+    public String getAuthorPHID() {
+      return authorPHID;
+    }
+
+    public String getOwnerPHID() {
+      return ownerPHID;
+    }
+
+    public JsonElement getCcPHIDs() {
+      return ccPHIDs;
+    }
+
+    public String getStatus() {
+      return status;
+    }
+
+    public String getStatusName() {
+      return statusName;
+    }
+
+    public Boolean getIsClosed() {
+      return isClosed;
+    }
+
+    public String getPriority() {
+      return priority;
+    }
+
+    public String getPriorityColor() {
+      return priorityColor;
+    }
+
+    public String getTitle() {
+      return title;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public JsonElement getProjectPHIDs() {
+      return projectPHIDs;
+    }
+
+    public String getUri() {
+      return uri;
+    }
+
+    public JsonElement getAuxiliary() {
+      return auxiliary;
+    }
+
+    public String getObjectName() {
+      return objectName;
+    }
+
+    public String getDateCreated() {
+      return dateCreated;
+    }
+
+    public String getDateModified() {
+      return dateModified;
+    }
+
+    public JsonElement getDependsOnTaskPHIDs() {
+      return dependsOnTaskPHIDs;
+    }
   }
 }

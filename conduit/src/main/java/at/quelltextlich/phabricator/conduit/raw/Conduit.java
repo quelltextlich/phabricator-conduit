@@ -14,7 +14,6 @@
 
 package at.quelltextlich.phabricator.conduit.raw;
 
-
 /**
  * Bindings for Phabricator's Conduit API
  * <p/>

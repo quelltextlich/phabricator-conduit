@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
-import at.quelltextlich.phabricator.conduit.results.ConduitConnect;
 
 public class OnDemandSessionHandler implements SessionHandler {
   private static final Logger log = LoggerFactory
@@ -53,7 +52,8 @@ public class OnDemandSessionHandler implements SessionHandler {
     }
     if (sessionKey == null) {
       log.debug("Trying to start new session");
-      final ConduitConnect conduitConnect = conduitModule.connect();
+      final ConduitModule.ConduitConnect conduitConnect = conduitModule
+          .connect();
       sessionKey = conduitConnect.getSessionKey();
     }
     final Map<String, Object> conduitParams = new HashMap<String, Object>();
