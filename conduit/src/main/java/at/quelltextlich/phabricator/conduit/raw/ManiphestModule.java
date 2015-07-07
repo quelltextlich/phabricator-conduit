@@ -14,6 +14,7 @@
 package at.quelltextlich.phabricator.conduit.raw;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
@@ -172,7 +173,7 @@ public class ManiphestModule extends Module {
     private String phid;
     private String authorPHID;
     private String ownerPHID;
-    private JsonElement ccPHIDs;
+    private List<String> ccPHIDs;
     private String status;
     private String statusName;
     private Boolean isClosed;
@@ -180,13 +181,13 @@ public class ManiphestModule extends Module {
     private String priorityColor;
     private String title;
     private String description;
-    private JsonElement projectPHIDs;
+    private List<String> projectPHIDs;
     private String uri;
-    private JsonElement auxiliary;
+    private Map<String, String> auxiliary;
     private String objectName;
     private String dateCreated;
     private String dateModified;
-    private JsonElement dependsOnTaskPHIDs;
+    private List<String> dependsOnTaskPHIDs;
 
     public int getId() {
       return id;
@@ -204,7 +205,7 @@ public class ManiphestModule extends Module {
       return ownerPHID;
     }
 
-    public JsonElement getCcPHIDs() {
+    public List<String> getCcPHIDs() {
       return ccPHIDs;
     }
 
@@ -236,7 +237,7 @@ public class ManiphestModule extends Module {
       return description;
     }
 
-    public JsonElement getProjectPHIDs() {
+    public List<String> getProjectPHIDs() {
       return projectPHIDs;
     }
 
@@ -244,7 +245,7 @@ public class ManiphestModule extends Module {
       return uri;
     }
 
-    public JsonElement getAuxiliary() {
+    public Map<String, String> getAuxiliary() {
       return auxiliary;
     }
 
@@ -260,7 +261,7 @@ public class ManiphestModule extends Module {
       return dateModified;
     }
 
-    public JsonElement getDependsOnTaskPHIDs() {
+    public List<String> getDependsOnTaskPHIDs() {
       return dependsOnTaskPHIDs;
     }
   }
