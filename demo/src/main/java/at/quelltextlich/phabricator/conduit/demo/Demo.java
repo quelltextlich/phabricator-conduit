@@ -23,6 +23,7 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionHandlerFilter;
 
 import at.quelltextlich.phabricator.conduit.Conduit;
+import at.quelltextlich.phabricator.conduit.ConduitFactory;
 import at.quelltextlich.phabricator.conduit.results.ConduitPing;
 import at.quelltextlich.phabricator.conduit.results.ManiphestInfo;
 import at.quelltextlich.phabricator.conduit.results.ManiphestUpdate;
@@ -113,7 +114,9 @@ public class Demo {
     parseArgs(args);
 
     try {
-      Conduit conduit = new Conduit(url, username, certificate);
+      // Creating a Conduit instance. This instance is the main entry point
+      // for the raw bindings.
+      Conduit conduit = ConduitFactory.createConduit(url, username, certificate);
 
 
 

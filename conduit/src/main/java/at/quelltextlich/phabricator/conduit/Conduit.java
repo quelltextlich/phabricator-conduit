@@ -17,25 +17,19 @@ package at.quelltextlich.phabricator.conduit;
 /**
  * Bindings for Phabricator's Conduit API
  * <p/>
+ * To easily create instances from only connection strings, see the
+ * {@link ConduitFactory#createConduit(String, String, String)} method.
+ * <p/>
  * This class is not thread-safe.
  */
 public class Conduit {
-  private final Connection connection;
-
   public final ConduitModule conduit;
   public final ManiphestModule maniphest;
 
-  public Conduit(final String baseUrl, final String username,
-      final String certificate) {
-    connection = new Connection(baseUrl);
-
-    final OnDemandSessionHandler sessionHandler = new OnDemandSessionHandler();
-
-    conduit = new ConduitModule(connection, sessionHandler, username,
-        certificate);
-    sessionHandler.setConduitModule(conduit);
-
-    maniphest = new ManiphestModule(connection, sessionHandler);
+  public Conduit(final ConduitModule conduitModule,
+      final ManiphestModule maniphestModule) {
+    conduit = conduitModule;
+    maniphest = maniphestModule;
   }
 
   /**
