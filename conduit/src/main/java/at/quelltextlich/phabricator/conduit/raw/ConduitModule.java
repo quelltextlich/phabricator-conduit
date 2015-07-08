@@ -200,4 +200,50 @@ public class ConduitModule extends Module {
       HashMap<String, List<String>> {
     private static final long serialVersionUID = 1L;
   }
+
+  /**
+   * Runs the API's 'conduit.getcertificate' method
+   *
+   * @param token
+   *          token to get the certificate for. This can be obtained from the
+   *          '/conduit/token/' page on your Phabricator.
+   * @param host
+   *          The Phabricator host name
+   */
+  public GetCertificateResult getCertificate(final String token,
+      final String host) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    params.put("token", token);
+    params.put("host", host);
+    final JsonElement callResult = connection.call("conduit.getcertificate",
+        params);
+    final GetCertificateResult result = gson.fromJson(callResult,
+        GetCertificateResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'conduit.getcertificate'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "username": "qchris",
+   *   "certificate": "xn6ajw32425d5kzx26rgjt2h7g2yfbok5r7fqinmpeatj4viohnbu4ux2pzyrdz4wghlyokzr5ng4wg5gricz2k5cjruds5jg2fj363chrq3iobu7bm2nctfnauqdz5gpwxuz2n2jqaqyrxotw3uppspoho3wr27ob2xesjep7eeqcwudzwyc6o47x46yozspna4rvltr5wdoq2mmdqyfqigkrdxrcw47zoccrmutinwz7podil3h3er6g6hnq6"
+   * }
+   * </pre>
+   */
+  public static class GetCertificateResult {
+    private String username;
+    private String certificate;
+
+    public String getUsername() {
+      return username;
+    }
+
+    public String getCertificate() {
+      return certificate;
+    }
+  }
 }

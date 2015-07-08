@@ -118,6 +118,28 @@ public class ConduitModuleTest extends ModuleTestCase {
     assertNotNull("Result is null", getCapabilitiesResult);
   }
 
+  public void testGetCertificatePass() throws Exception {
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    final JsonObject retRelevant = new JsonObject();
+
+    expect(
+        connection.call(eq("conduit.getcertificate"), capture(paramsCapture)))
+        .andReturn(retRelevant).once();
+
+    replayMocks();
+
+    final ConduitModule module = getModule();
+    final ConduitModule.GetCertificateResult result = module.getCertificate(
+        "tokenFoo", "hostBar");
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertEquals("Tokens do not match", "tokenFoo", params.get("token"));
+    assertEquals("Hostnames do not match", "hostBar", params.get("host"));
+
+    assertNotNull("Result is null", result);
+  }
+
   @Override
   protected ConduitModule getModule() {
     return new ConduitModule(connection, sessionHandler, "userFoo", "certBar");
