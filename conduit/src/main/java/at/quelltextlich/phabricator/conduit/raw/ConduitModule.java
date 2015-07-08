@@ -27,6 +27,7 @@ import at.quelltextlich.phabricator.conduit.bare.Connection;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Module for Conduit methods starting in 'conduit.'
@@ -244,6 +245,81 @@ public class ConduitModule extends Module {
 
     public String getCertificate() {
       return certificate;
+    }
+  }
+
+  /**
+   * Runs the API's 'conduit.query' method
+   */
+  public QueryResult query() throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    final JsonElement callResult = connection.call("conduit.query", params);
+    final QueryResult result = gson.fromJson(callResult, QueryResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'conduit.getcertificate'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "almanac.querydevices": {
+   *     "description": "Query Almanac devices.",
+   *     "params": {
+   *       "ids": "optional list<id>",
+   *       "phids": "optional list<phid>",
+   *       "names": "optional list<phid>",
+   *       "before": "optional string",
+   *       "after": "optional string",
+   *       "limit": "optional int (default = 100)"
+   *     },
+   *     "return": "list<wild>"
+   *   },
+   *   "almanac.queryservices": {
+   *     "description": "Query Almanac services.",
+   *     "params": {
+   *       "ids": "optional list<id>",
+   *       "phids": "optional list<phid>",
+   *        "names": "optional list<phid>",
+   *       "devicePHIDs": "optional list<phid>",
+   *       "serviceClasses": "optional list<string>",
+   *       "before": "optional string",
+   *       "after": "optional string",
+   *       "limit": "optional int (default = 100)"
+   *     },
+   *     "return": "list<wild>"
+   *   },
+   *   [...]
+   * }
+   * </pre>
+   */
+  public static class QueryResult extends HashMap<String, QueryResultProject> {
+    private static final long serialVersionUID = 1L;
+  }
+
+  public static class QueryResultProject {
+    String description;
+    Map<String, String> params;
+    @SerializedName("return")
+    String _return;
+
+    public String getReturn() {
+      return _return;
+    }
+
+    public void setReturn(final String _return) {
+      this._return = _return;
+    }
+
+    public String getDescription() {
+      return description;
+    }
+
+    public Map<String, String> getParams() {
+      return params;
     }
   }
 }
