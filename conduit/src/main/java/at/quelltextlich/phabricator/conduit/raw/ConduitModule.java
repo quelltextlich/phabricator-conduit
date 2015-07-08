@@ -51,8 +51,8 @@ public class ConduitModule extends Module {
     final JsonElement callResult = connection.call("conduit.ping");
     final JsonObject callResultWrapper = new JsonObject();
     callResultWrapper.add("hostname", callResult);
-    final PingResult result = gson.fromJson(callResultWrapper,
-        PingResult.class);
+    final PingResult result = gson
+        .fromJson(callResultWrapper, PingResult.class);
     return result;
   }
 
@@ -115,8 +115,7 @@ public class ConduitModule extends Module {
 
     final JsonElement callResult = connection.call("conduit.connect", params);
 
-    final ConnectResult result = gson.fromJson(callResult,
-        ConnectResult.class);
+    final ConnectResult result = gson.fromJson(callResult, ConnectResult.class);
     return result;
   }
 

@@ -104,15 +104,13 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestModule.UpdateResult updateResult = module.update(42,
-        "foo");
+    final ManiphestModule.UpdateResult updateResult = module.update(42, "foo");
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("TaskResult id is not set", 42, params.get("id"));
     assertHasSessionKey(params);
 
-    assertEquals("UpdateResult's id does not match", 42,
-        updateResult.getId());
+    assertEquals("UpdateResult's id does not match", 42, updateResult.getId());
   }
 
   public void testUpdateFailSession() throws Exception {

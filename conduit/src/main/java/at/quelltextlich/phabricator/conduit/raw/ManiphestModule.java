@@ -92,8 +92,7 @@ public class ManiphestModule extends Module {
     params.put("comments", comment);
 
     final JsonElement callResult = connection.call("maniphest.update", params);
-    final UpdateResult result = gson.fromJson(callResult,
-        UpdateResult.class);
+    final UpdateResult result = gson.fromJson(callResult, UpdateResult.class);
     return result;
   }
 
