@@ -101,6 +101,23 @@ public class ConduitModuleTest extends ModuleTestCase {
     assertEquals("Usernames do not match", "userFoo", params.get("user"));
   }
 
+  public void testGetCapabilitiesPass() throws Exception {
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    final JsonObject retRelevant = new JsonObject();
+
+    expect(
+        connection.call(eq("conduit.getcapabilities"), capture(paramsCapture)))
+        .andReturn(retRelevant).once();
+
+    replayMocks();
+
+    final ConduitModule module = getModule();
+    final ConduitModule.GetCapabilitiesResult getCapabilitiesResult = module
+        .getCapabilities();
+    assertNotNull("Result is null", getCapabilitiesResult);
+  }
+
   @Override
   protected ConduitModule getModule() {
     return new ConduitModule(connection, sessionHandler, "userFoo", "certBar");

@@ -17,6 +17,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.DatatypeConverter;
@@ -152,5 +153,51 @@ public class ConduitModule extends Module {
     public String getUserPhId() {
       return userPHID;
     }
+  }
+
+  /**
+   * Runs the API's 'conduit.getcapabilities' method
+   */
+  public GetCapabilitiesResult getCapabilities() throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+
+    final JsonElement callResult = connection.call("conduit.getcapabilities",
+        params);
+    final GetCapabilitiesResult result = gson.fromJson(callResult,
+        GetCapabilitiesResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to conduit.getcapabilities
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "output": [
+   *     "json",
+   *     "human"
+   *   ],
+   *   "input": [
+   *     "json",
+   *     "urlencoded"
+   *   ],
+   *   "signatures": [
+   *     "consign"
+   *   ],
+   *   "authentication": [
+   *     "token",
+   *     "asymmetric",
+   *     "session",
+   *     "sessionless",
+   *     "oauth"
+   *   ]
+   * }
+   * </pre>
+   */
+  public static class GetCapabilitiesResult extends
+      HashMap<String, List<String>> {
+    private static final long serialVersionUID = 1L;
   }
 }
