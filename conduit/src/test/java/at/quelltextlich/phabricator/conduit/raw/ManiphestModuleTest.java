@@ -17,12 +17,16 @@ import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.easymock.Capture;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -30,22 +34,55 @@ public class ManiphestModuleTest extends ModuleTestCase {
   public void testInfoPass() throws Exception {
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
-    final JsonObject retRelevant = new JsonObject();
-    retRelevant.add("id", new JsonPrimitive(42));
+    final JsonObject ret = new JsonObject();
+    final JsonArray userArrayRet = new JsonArray();
+    userArrayRet.add(new JsonPrimitive("PHID-USER-3nphm6xkw2mpyfshq4dq"));
+    final JsonObject auxiliaryRet = new JsonObject();
+    auxiliaryRet.add("std:maniphest:security_topic", null);
+    auxiliaryRet.add("isdc:sprint:storypoints", null);
+    ret.addProperty("id", 42);
+    ret.addProperty("phid", "PHID-TASK-btorxi3333rmlvrqdzr7");
+    ret.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    ret.add("ownerPHID", null);
+    ret.add("ccPHIDs", userArrayRet);
+    ret.addProperty("status", "open");
+    ret.addProperty("statusName", "Open");
+    ret.addProperty("isClosed", false);
+    ret.addProperty("priority", "Needs Triage");
+    ret.addProperty("priorityColor", "violet");
+    ret.addProperty("title", "qchris-test-task");
+    ret.addProperty("description", "foo");
+    ret.add("projectPHIDs", new JsonArray());
+    ret.addProperty("uri", "https://phabricator.local/T42");
+    ret.add("auxiliary", auxiliaryRet);
+    ret.addProperty("objectName", "T42");
+    ret.addProperty("dateCreated", "1436304454");
+    ret.addProperty("dateModified", "1436304469");
+    ret.add("dependsOnTaskPHIDs", new JsonArray());
 
     expect(connection.call(eq("maniphest.info"), capture(paramsCapture)))
-        .andReturn(retRelevant).once();
+        .andReturn(ret).once();
 
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestModule.InfoResult infoResult = module.info(42);
+    final ManiphestModule.InfoResult result = module.info(42);
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("TaskResult id is not set", 42, params.get("task_id"));
     assertHasSessionKey(params);
 
-    assertEquals("InfoResult's id does not match", 42, infoResult.getId());
+    final Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("std:maniphest:security_topic", null);
+    auxiliary.put("isdc:sprint:storypoints", null);
+    final ManiphestModule.InfoResult expected = new ManiphestModule.InfoResult(
+        42, "PHID-TASK-btorxi3333rmlvrqdzr7", "PHID-USER-3nphm6xkw2mpyfshq4dq",
+        null, Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq"), "open", "Open",
+        false, "Needs Triage", "violet", "qchris-test-task", "foo",
+        new ArrayList<String>(), "https://phabricator.local/T42", auxiliary,
+        "T42", "1436304454", "1436304469", new ArrayList<String>());
+
+    assertEquals("Results do not match", expected, result);
   }
 
   public void testInfoFailSession() throws Exception {
