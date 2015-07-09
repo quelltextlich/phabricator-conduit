@@ -25,11 +25,13 @@ package at.quelltextlich.phabricator.conduit.raw;
 public class Conduit {
   public final ConduitModule conduit;
   public final ManiphestModule maniphest;
+  public final PhidModule phid;
 
   public Conduit(final ConduitModule conduitModule,
-      final ManiphestModule maniphestModule) {
+      final ManiphestModule maniphestModule, final PhidModule phidModule) {
     conduit = conduitModule;
     maniphest = maniphestModule;
+    phid = phidModule;
   }
 
   /**
@@ -48,5 +50,14 @@ public class Conduit {
    */
   public ManiphestModule getManiphestModule() {
     return maniphest;
+  }
+
+  /**
+   * Gets the current PhidModule
+   *
+   * @return Gets the current PhidModule
+   */
+  public PhidModule getPhidModule() {
+    return phid;
   }
 }

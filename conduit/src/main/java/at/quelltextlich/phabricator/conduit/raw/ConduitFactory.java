@@ -28,7 +28,8 @@ public class ConduitFactory {
 
     final ManiphestModule maniphestModule = new ManiphestModule(connection,
         sessionHandler);
+    final PhidModule phidModule = new PhidModule(connection, sessionHandler);
 
-    return new Conduit(conduitModule, maniphestModule);
+    return new Conduit(conduitModule, maniphestModule, phidModule);
   }
 }
