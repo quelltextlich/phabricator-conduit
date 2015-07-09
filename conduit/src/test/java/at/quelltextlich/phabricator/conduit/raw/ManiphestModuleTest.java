@@ -126,28 +126,186 @@ public class ManiphestModuleTest extends ModuleTestCase {
     assertHasSessionKey(params);
   }
 
-  public void testUpdatePass() throws Exception {
+  public void testUpdatePassId() throws Exception {
     final JsonObject retConnect = new JsonObject();
     retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
 
-    final JsonObject retRelevant = new JsonObject();
-    retRelevant.add("id", new JsonPrimitive(42));
+    final JsonObject ret = new JsonObject();
+    final JsonArray userArrayRet = new JsonArray();
+    userArrayRet.add(new JsonPrimitive("PHID-USER-3nphm6xkw2mpyfshq4dq"));
+    final JsonObject auxiliaryRet = new JsonObject();
+    auxiliaryRet.add("std:maniphest:security_topic", null);
+    auxiliaryRet.add("isdc:sprint:storypoints", null);
+    ret.addProperty("id", 42);
+    ret.addProperty("phid", "PHID-TASK-btorxi3333rmlvrqdzr7");
+    ret.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    ret.add("ownerPHID", null);
+    ret.add("ccPHIDs", userArrayRet);
+    ret.addProperty("status", "open");
+    ret.addProperty("statusName", "Open");
+    ret.addProperty("isClosed", false);
+    ret.addProperty("priority", "Needs Triage");
+    ret.addProperty("priorityColor", "violet");
+    ret.addProperty("title", "qchris-test-task");
+    ret.addProperty("description", "foo");
+    ret.add("projectPHIDs", new JsonArray());
+    ret.addProperty("uri", "https://phabricator.local/T42");
+    ret.add("auxiliary", auxiliaryRet);
+    ret.addProperty("objectName", "T42");
+    ret.addProperty("dateCreated", "1436304454");
+    ret.addProperty("dateModified", "1436304469");
+    ret.add("dependsOnTaskPHIDs", new JsonArray());
 
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
     expect(connection.call(eq("maniphest.update"), capture(paramsCapture)))
-        .andReturn(retRelevant).once();
+        .andReturn(ret).once();
 
     replayMocks();
 
     final ManiphestModule module = getModule();
-    final ManiphestModule.UpdateResult updateResult = module.update(42, "foo");
+    final Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("foo", "fooValue");
+    auxiliary.put("bar", "barValue");
+    final ManiphestModule.UpdateResult result = module.update(42, null,
+        "titleFoo", "descriptionBar", "ownerBaz", "viewPolicyFoo",
+        "editPolicyBar", Arrays.asList("cc1", "cc2"), 85,
+        Arrays.asList("project1", "project2"), auxiliary, "statusFoo",
+        "commentsBar");
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("TaskResult id is not set", 42, params.get("id"));
     assertHasSessionKey(params);
+    assertEquals("'id' does not match in params", 42, params.get("id"));
+    assertNull("'phid' is not null", params.get("phid"));
+    assertEquals("'title' does not match in params", "titleFoo",
+        params.get("title"));
+    assertEquals("'description' does not match in params", "descriptionBar",
+        params.get("description"));
+    assertEquals("'owner' does not match in params", "ownerBaz",
+        params.get("ownerPHID"));
+    assertEquals("'viewPolicy' does not match in params", "viewPolicyFoo",
+        params.get("viewPolicy"));
+    assertEquals("'editPolicy' does not match in params", "editPolicyBar",
+        params.get("editPolicy"));
+    assertEquals("'ccPHIDs' does not match in params",
+        Arrays.asList("cc1", "cc2"), params.get("ccPHIDs"));
+    assertEquals("'priority' does not match in params", 85,
+        params.get("priority"));
+    assertEquals("'projectPHIDs' does not match in params",
+        Arrays.asList("project1", "project2"), params.get("projectPHIDs"));
+    final Map<String, String> auxiliaryParam = new HashMap<String, String>();
+    auxiliaryParam.put("foo", "fooValue");
+    auxiliaryParam.put("bar", "barValue");
+    assertEquals("'auxiliary' does not match in params", auxiliaryParam,
+        params.get("auxiliary"));
+    assertEquals("'status' does not match in params", "statusFoo",
+        params.get("status"));
+    assertEquals("'comments' does not match in params", "commentsBar",
+        params.get("comments"));
 
-    assertEquals("UpdateResult's id does not match", 42, updateResult.getId());
+    final Map<String, String> auxiliaryExp = new HashMap<String, String>();
+    auxiliaryExp.put("std:maniphest:security_topic", null);
+    auxiliaryExp.put("isdc:sprint:storypoints", null);
+    final ManiphestModule.UpdateResult expected = new ManiphestModule.UpdateResult(
+        42, "PHID-TASK-btorxi3333rmlvrqdzr7", "PHID-USER-3nphm6xkw2mpyfshq4dq",
+        null, Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq"), "open", "Open",
+        false, "Needs Triage", "violet", "qchris-test-task", "foo",
+        new ArrayList<String>(), "https://phabricator.local/T42", auxiliaryExp,
+        "T42", "1436304454", "1436304469", new ArrayList<String>());
+
+    assertEquals("Results do not match", expected, result);
+  }
+
+  public void testUpdatePassPhid() throws Exception {
+    final JsonObject retConnect = new JsonObject();
+    retConnect.add("sessionKey", new JsonPrimitive("KeyFoo"));
+
+    final JsonObject ret = new JsonObject();
+    final JsonArray userArrayRet = new JsonArray();
+    userArrayRet.add(new JsonPrimitive("PHID-USER-3nphm6xkw2mpyfshq4dq"));
+    final JsonObject auxiliaryRet = new JsonObject();
+    auxiliaryRet.add("std:maniphest:security_topic", null);
+    auxiliaryRet.add("isdc:sprint:storypoints", null);
+    ret.addProperty("id", 42);
+    ret.addProperty("phid", "PHID-TASK-btorxi3333rmlvrqdzr7");
+    ret.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    ret.add("ownerPHID", null);
+    ret.add("ccPHIDs", userArrayRet);
+    ret.addProperty("status", "open");
+    ret.addProperty("statusName", "Open");
+    ret.addProperty("isClosed", false);
+    ret.addProperty("priority", "Needs Triage");
+    ret.addProperty("priorityColor", "violet");
+    ret.addProperty("title", "qchris-test-task");
+    ret.addProperty("description", "foo");
+    ret.add("projectPHIDs", new JsonArray());
+    ret.addProperty("uri", "https://phabricator.local/T42");
+    ret.add("auxiliary", auxiliaryRet);
+    ret.addProperty("objectName", "T42");
+    ret.addProperty("dateCreated", "1436304454");
+    ret.addProperty("dateModified", "1436304469");
+    ret.add("dependsOnTaskPHIDs", new JsonArray());
+
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    expect(connection.call(eq("maniphest.update"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final ManiphestModule module = getModule();
+    final Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("foo", "fooValue");
+    auxiliary.put("bar", "barValue");
+    final ManiphestModule.UpdateResult result = module.update(null,
+        "PHID-TASK-btorxi3333rmlvrqdzr7", "titleFoo", "descriptionBar",
+        "ownerBaz", "viewPolicyFoo", "editPolicyBar",
+        Arrays.asList("cc1", "cc2"), 85, Arrays.asList("project1", "project2"),
+        auxiliary, "statusFoo", "commentsBar");
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertNull("'id' does not match in params", params.get("id"));
+    assertEquals("'phid' does not match in params",
+        "PHID-TASK-btorxi3333rmlvrqdzr7", params.get("phid"));
+    assertEquals("'title' does not match in params", "titleFoo",
+        params.get("title"));
+    assertEquals("'description' does not match in params", "descriptionBar",
+        params.get("description"));
+    assertEquals("'owner' does not match in params", "ownerBaz",
+        params.get("ownerPHID"));
+    assertEquals("'viewPolicy' does not match in params", "viewPolicyFoo",
+        params.get("viewPolicy"));
+    assertEquals("'editPolicy' does not match in params", "editPolicyBar",
+        params.get("editPolicy"));
+    assertEquals("'ccPHIDs' does not match in params",
+        Arrays.asList("cc1", "cc2"), params.get("ccPHIDs"));
+    assertEquals("'priority' does not match in params", 85,
+        params.get("priority"));
+    assertEquals("'projectPHIDs' does not match in params",
+        Arrays.asList("project1", "project2"), params.get("projectPHIDs"));
+    final Map<String, String> auxiliaryParam = new HashMap<String, String>();
+    auxiliaryParam.put("foo", "fooValue");
+    auxiliaryParam.put("bar", "barValue");
+    assertEquals("'auxiliary' does not match in params", auxiliaryParam,
+        params.get("auxiliary"));
+    assertEquals("'status' does not match in params", "statusFoo",
+        params.get("status"));
+    assertEquals("'comments' does not match in params", "commentsBar",
+        params.get("comments"));
+
+    final Map<String, String> auxiliaryExp = new HashMap<String, String>();
+    auxiliaryExp.put("std:maniphest:security_topic", null);
+    auxiliaryExp.put("isdc:sprint:storypoints", null);
+    final ManiphestModule.UpdateResult expected = new ManiphestModule.UpdateResult(
+        42, "PHID-TASK-btorxi3333rmlvrqdzr7", "PHID-USER-3nphm6xkw2mpyfshq4dq",
+        null, Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq"), "open", "Open",
+        false, "Needs Triage", "violet", "qchris-test-task", "foo",
+        new ArrayList<String>(), "https://phabricator.local/T42", auxiliaryExp,
+        "T42", "1436304454", "1436304469", new ArrayList<String>());
+
+    assertEquals("Results do not match", expected, result);
   }
 
   public void testUpdateFailSession() throws Exception {
@@ -158,8 +316,14 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
+    final Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("foo", "fooValue");
+    auxiliary.put("bar", "barValue");
     try {
-      module.update(42, "foo");
+      module.update(42, null, "titleFoo", "descriptionBar", "ownerBaz",
+          "viewPolicyFoo", "editPolicyBar", Arrays.asList("cc1", "cc2"), 85,
+          Arrays.asList("project1", "project2"), auxiliary, "statusFoo",
+          "commentsBar");
       fail("no exception got thrown");
     } catch (final ConduitException e) {
       assertSame(conduitException, e);
@@ -177,8 +341,14 @@ public class ManiphestModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ManiphestModule module = getModule();
+    final Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("foo", "fooValue");
+    auxiliary.put("bar", "barValue");
     try {
-      module.update(42, "foo");
+      module.update(42, null, "titleFoo", "descriptionBar", "ownerBaz",
+          "viewPolicyFoo", "editPolicyBar", Arrays.asList("cc1", "cc2"), 85,
+          Arrays.asList("project1", "project2"), auxiliary, "statusFoo",
+          "commentsBar");
       fail("no exception got thrown");
     } catch (final ConduitException e) {
       assertSame(conduitException, e);

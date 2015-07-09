@@ -97,12 +97,27 @@ public class ManiphestModule extends Module {
   /**
    * Runs the API's 'maniphest.update' method
    */
-  public UpdateResult update(final int taskId, final String comment)
-      throws ConduitException {
+  public UpdateResult update(final Integer id, final String phid,
+      final String title, final String description, final String ownerPhid,
+      final String viewPolicy, final String editPolicy,
+      final List<String> ccPhids, final Integer priority,
+      final List<String> projectPhids, final Map<String, String> auxiliary,
+      final String status, final String comments) throws ConduitException {
     final Map<String, Object> params = new HashMap<String, Object>();
     sessionHandler.fillInSession(params);
-    params.put("id", taskId);
-    params.put("comments", comment);
+    params.put("id", id);
+    params.put("phid", phid);
+    params.put("title", title);
+    params.put("description", description);
+    params.put("ownerPHID", ownerPhid);
+    params.put("viewPolicy", viewPolicy);
+    params.put("editPolicy", editPolicy);
+    params.put("ccPHIDs", ccPhids);
+    params.put("priority", priority);
+    params.put("projectPHIDs", projectPhids);
+    params.put("auxiliary", auxiliary);
+    params.put("status", status);
+    params.put("comments", comments);
 
     final JsonElement callResult = connection.call("maniphest.update", params);
     final UpdateResult result = gson.fromJson(callResult, UpdateResult.class);

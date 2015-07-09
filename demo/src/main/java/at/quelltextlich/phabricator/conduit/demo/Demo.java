@@ -172,8 +172,9 @@ public class Demo {
       if (askPermission("May I add a comment saying 'Test comment' to task T"
           + taskId + "?")) {
         stdout.println("Adding 'Test comment' to task T" + taskId + "...");
-        ManiphestModule.UpdateResult updateResult = conduit.getManiphestModule().update(taskId,
-            "Test comment");
+        final ManiphestModule.UpdateResult updateResult = conduit
+            .getManiphestModule().update(taskId, null, null, null, null, null,
+                null, null, null, null, null, null, "Test comment");
         stdout.println("Done.");
 
         stdout.println("Fetching fresh info about task T" + taskId + "...");
