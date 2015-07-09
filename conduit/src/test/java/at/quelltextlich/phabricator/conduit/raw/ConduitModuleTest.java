@@ -35,9 +35,11 @@ public class ConduitModuleTest extends ModuleTestCase {
 
     final ConduitModule module = getModule();
 
-    final ConduitModule.PingResult actual = module.ping();
+    final ConduitModule.PingResult result = module.ping();
 
-    assertEquals("Hostname does not match", "foo", actual.getHostname());
+    final ConduitModule.PingResult expected = new ConduitModule.PingResult(
+        "foo");
+    assertEquals("Hostname does not match", expected, result);
   }
 
   public void testPingConnectionFail() throws Exception {

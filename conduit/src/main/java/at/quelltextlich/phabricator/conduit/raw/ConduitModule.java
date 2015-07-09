@@ -65,10 +65,50 @@ public class ConduitModule extends Module {
    * make it a nicer Java citizen.
    */
   public static class PingResult {
-    private String hostname;
+    private final String hostname;
+
+    public PingResult(final String hostname) {
+      super();
+      this.hostname = hostname;
+    }
 
     public String getHostname() {
       return hostname;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((hostname == null) ? 0 : hostname.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final PingResult other = (PingResult) obj;
+      if (hostname == null) {
+        if (other.hostname != null) {
+          return false;
+        }
+      } else if (!hostname.equals(other.hostname)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "PingResult [hostname=" + hostname + "]";
     }
   }
 
