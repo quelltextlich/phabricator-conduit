@@ -18,6 +18,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.easymock.Capture;
@@ -165,10 +166,25 @@ public class ConduitModuleTest extends ModuleTestCase {
   public void testQueryPass() throws Exception {
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
-    final JsonObject retRelevant = new JsonObject();
+    final JsonObject ret = new JsonObject();
+
+    final JsonObject retFoo = new JsonObject();
+    retFoo.addProperty("description", "service Foo");
+    final JsonObject paramsFoo = new JsonObject();
+    paramsFoo.addProperty("paramFooA", "valueA");
+    paramsFoo.addProperty("paramFooB", "valueB");
+    retFoo.add("params", paramsFoo);
+    retFoo.addProperty("return", "return foo");
+    ret.add("foo", retFoo);
+
+    final JsonObject retBar = new JsonObject();
+    retBar.addProperty("description", "service Bar");
+    retBar.add("params", new JsonObject());
+    retBar.addProperty("return", "return bar");
+    ret.add("bar", retBar);
 
     expect(connection.call(eq("conduit.query"), capture(paramsCapture)))
-        .andReturn(retRelevant).once();
+        .andReturn(ret).once();
 
     replayMocks();
 
@@ -178,7 +194,15 @@ public class ConduitModuleTest extends ModuleTestCase {
     final Map<String, Object> params = paramsCapture.getValue();
     assertHasSessionKey(params);
 
-    assertNotNull("Result is null", result);
+    final ConduitModule.QueryResult expected = new ConduitModule.QueryResult();
+    final Map<String, String> expectedFooParams = new HashMap<String, String>();
+    expectedFooParams.put("paramFooA", "valueA");
+    expectedFooParams.put("paramFooB", "valueB");
+    expected.put("foo", new ConduitModule.SingleQueryResult("service Foo",
+        expectedFooParams, "return foo"));
+    expected.put("bar", new ConduitModule.SingleQueryResult("service Bar",
+        new HashMap<String, String>(), "return bar"));
+    assertEquals("Results do not match", expected, result);
   }
 
   @Override

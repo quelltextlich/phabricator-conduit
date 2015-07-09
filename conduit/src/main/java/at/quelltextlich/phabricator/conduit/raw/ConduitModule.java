@@ -427,7 +427,7 @@ public class ConduitModule extends Module {
    *     "params": {
    *       "ids": "optional list<id>",
    *       "phids": "optional list<phid>",
-   *        "names": "optional list<phid>",
+   *       "names": "optional list<phid>",
    *       "devicePHIDs": "optional list<phid>",
    *       "serviceClasses": "optional list<string>",
    *       "before": "optional string",
@@ -440,22 +440,26 @@ public class ConduitModule extends Module {
    * }
    * </pre>
    */
-  public static class QueryResult extends HashMap<String, QueryResultProject> {
+  public static class QueryResult extends HashMap<String, SingleQueryResult> {
     private static final long serialVersionUID = 1L;
   }
 
-  public static class QueryResultProject {
+  public static class SingleQueryResult {
     String description;
     Map<String, String> params;
     @SerializedName("return")
     String _return;
 
-    public String getReturn() {
-      return _return;
+    public SingleQueryResult(final String description,
+        final Map<String, String> params, final String _return) {
+      super();
+      this.description = description;
+      this.params = params;
+      this._return = _return;
     }
 
-    public void setReturn(final String _return) {
-      this._return = _return;
+    public String getReturn() {
+      return _return;
     }
 
     public String getDescription() {
@@ -464,6 +468,59 @@ public class ConduitModule extends Module {
 
     public Map<String, String> getParams() {
       return params;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((_return == null) ? 0 : _return.hashCode());
+      result = prime * result
+          + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((params == null) ? 0 : params.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final SingleQueryResult other = (SingleQueryResult) obj;
+      if (_return == null) {
+        if (other._return != null) {
+          return false;
+        }
+      } else if (!_return.equals(other._return)) {
+        return false;
+      }
+      if (description == null) {
+        if (other.description != null) {
+          return false;
+        }
+      } else if (!description.equals(other.description)) {
+        return false;
+      }
+      if (params == null) {
+        if (other.params != null) {
+          return false;
+        }
+      } else if (!params.equals(other.params)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "SingleQueryResult[description=" + description + ", params="
+          + params + ", return=" + _return + "]";
     }
   }
 }
