@@ -139,11 +139,13 @@ public class ConduitModuleTest extends ModuleTestCase {
   public void testGetCertificatePass() throws Exception {
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
-    final JsonObject retRelevant = new JsonObject();
+    final JsonObject ret = new JsonObject();
+    ret.addProperty("username", "userFoo");
+    ret.addProperty("certificate", "certBar");
 
     expect(
         connection.call(eq("conduit.getcertificate"), capture(paramsCapture)))
-        .andReturn(retRelevant).once();
+        .andReturn(ret).once();
 
     replayMocks();
 
@@ -155,7 +157,9 @@ public class ConduitModuleTest extends ModuleTestCase {
     assertEquals("Tokens do not match", "tokenFoo", params.get("token"));
     assertEquals("Hostnames do not match", "hostBar", params.get("host"));
 
-    assertNotNull("Result is null", result);
+    final ConduitModule.GetCertificateResult expected = new ConduitModule.GetCertificateResult(
+        "userFoo", "certBar");
+    assertEquals("Results do not match", expected, result);
   }
 
   public void testQueryPass() throws Exception {

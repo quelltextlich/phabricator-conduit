@@ -329,8 +329,14 @@ public class ConduitModule extends Module {
    * </pre>
    */
   public static class GetCertificateResult {
-    private String username;
-    private String certificate;
+    public GetCertificateResult(final String username, final String certificate) {
+      super();
+      this.username = username;
+      this.certificate = certificate;
+    }
+
+    private final String username;
+    private final String certificate;
 
     public String getUsername() {
       return username;
@@ -338,6 +344,51 @@ public class ConduitModule extends Module {
 
     public String getCertificate() {
       return certificate;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result
+          + ((certificate == null) ? 0 : certificate.hashCode());
+      result = prime * result + ((username == null) ? 0 : username.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final GetCertificateResult other = (GetCertificateResult) obj;
+      if (certificate == null) {
+        if (other.certificate != null) {
+          return false;
+        }
+      } else if (!certificate.equals(other.certificate)) {
+        return false;
+      }
+      if (username == null) {
+        if (other.username != null) {
+          return false;
+        }
+      } else if (!username.equals(other.username)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "GetCertificateResult [username=" + username + ", certificate="
+          + certificate + "]";
     }
   }
 
