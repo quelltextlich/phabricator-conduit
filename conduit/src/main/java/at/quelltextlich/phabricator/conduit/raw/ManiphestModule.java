@@ -32,6 +32,85 @@ public class ManiphestModule extends Module {
   }
 
   /**
+   * Runs the API's 'maniphest.createtask' method
+   */
+  public CreateTaskResult createTask(final String title,
+      final String description, final String ownerPhid,
+      final String viewPolicy, final String editPolicy,
+      final List<String> ccPhids, final Integer priority,
+      final List<String> projectPhids, final Map<String, String> auxiliary)
+      throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("title", title);
+    params.put("description", description);
+    params.put("ownerPHID", ownerPhid);
+    params.put("viewPolicy", viewPolicy);
+    params.put("editPolicy", editPolicy);
+    params.put("ccPHIDs", ccPhids);
+    params.put("priority", priority);
+    params.put("projectPHIDs", projectPhids);
+    params.put("auxiliary", auxiliary);
+
+    final JsonElement callResult = connection.call("maniphest.createtask",
+        params);
+    final CreateTaskResult result = gson.fromJson(callResult,
+        CreateTaskResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'maniphest.createtask'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "id":"48",
+   *   "phid":"PHID-TASK-pemd324eosnymq3tdkyo",
+   *   "authorPHID":"PHID-USER-na3one2sht11aone",
+   *   "ownerPHID":null,
+   *   "ccPHIDs":[
+   *     "PHID-USER-h4n62fq2kt2v3a2qjyqh"
+   *   ],
+   *   "status":"open",
+   *   "statusName":"Open",
+   *   "isClosed":false,
+   *   "priority": "Needs Triage",
+   *   "priorityColor":"violet",
+   *   "title":"QChris test task",
+   *   "description":"",
+   *   "projectPHIDs":[],
+   *   "uri":"https://phabricator.local/T47",
+   *   "auxiliary":{
+   *     "std:maniphest:security_topic":"default",
+   *     "isdc:sprint:storypoints":null
+   *   },
+   *   "objectName":"T47",
+   *   "dateCreated":"1413484594",
+   *   "dateModified":1413549869,
+   *   "dependsOnTaskPHIDs":[]
+   * }
+   * </pre>
+   */
+  public static class CreateTaskResult extends TaskResult {
+    public CreateTaskResult(final int id, final String phid,
+        final String authorPHID, final String ownerPHID,
+        final List<String> ccPHIDs, final String status,
+        final String statusName, final Boolean isClosed, final String priority,
+        final String priorityColor, final String title,
+        final String description, final List<String> projectPHIDs,
+        final String uri, final Map<String, String> auxiliary,
+        final String objectName, final String dateCreated,
+        final String dateModified, final List<String> dependsOnTaskPHIDs) {
+      super(id, phid, authorPHID, ownerPHID, ccPHIDs, status, statusName,
+          isClosed, priority, priorityColor, title, description, projectPHIDs,
+          uri, auxiliary, objectName, dateCreated, dateModified,
+          dependsOnTaskPHIDs);
+    }
+  }
+
+  /**
    * Runs the API's 'maniphest.Info' method
    */
   public InfoResult info(final int taskId) throws ConduitException {
