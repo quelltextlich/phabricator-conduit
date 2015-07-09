@@ -25,6 +25,8 @@ import java.util.Map;
 import org.easymock.Capture;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
+import at.quelltextlich.phabricator.conduit.raw.ManiphestModule.SingleGetTaskTransactionsResult;
+import at.quelltextlich.phabricator.conduit.raw.ManiphestModule.TaskTransaction;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -107,6 +109,92 @@ public class ManiphestModuleTest extends ModuleTestCase {
         false, "Needs Triage", "violet", "qchris-test-task", "foo",
         new ArrayList<String>(), "https://phabricator.local/T42", auxiliaryExp,
         "T42", "1436304454", "1436304469", new ArrayList<String>());
+
+    assertEquals("Results do not match", expected, result);
+  }
+
+  public void testGetTaskTransactionsPass() throws Exception {
+    JsonObject transaction;
+
+    final JsonObject ret = new JsonObject();
+
+    final JsonArray ret84 = new JsonArray();
+    transaction = new JsonObject();
+    transaction.addProperty("taskID", "84");
+    transaction
+        .addProperty("transactionPHID", "PHID-XACT-TASK-xhbr4gj7ca224b2");
+    transaction.addProperty("transactionType", "priority");
+    transaction.add("oldValue", null);
+    transaction.addProperty("newValue", 25);
+    transaction.add("comments", null);
+    transaction.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    transaction.addProperty("dateCreated", "1436473263");
+    ret84.add(transaction);
+
+    transaction = new JsonObject();
+    transaction.addProperty("taskID", "84");
+    transaction
+        .addProperty("transactionPHID", "PHID-XACT-TASK-xhbr4gj7ca224b3");
+    transaction.addProperty("transactionType", "title");
+    transaction.addProperty("oldValue", "foo");
+    transaction.addProperty("newValue", "bar");
+    transaction.addProperty("comments", "commentBar");
+    transaction.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    transaction.addProperty("dateCreated", "1436473263");
+    ret84.add(transaction);
+
+    ret.add("84", ret84);
+
+    final JsonArray ret85 = new JsonArray();
+    transaction = new JsonObject();
+    transaction.addProperty("taskID", "85");
+    transaction
+        .addProperty("transactionPHID", "PHID-XACT-TASK-xhbr4gj7ca224b4");
+    transaction.addProperty("transactionType", "core:subscribers");
+    transaction.add("oldValue", new JsonArray());
+    final JsonArray userArray = new JsonArray();
+    userArray.add(new JsonPrimitive("user1"));
+    userArray.add(new JsonPrimitive("user2"));
+    transaction.add("newValue", userArray);
+    transaction.addProperty("comments", "commentFoo");
+    transaction.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    transaction.addProperty("dateCreated", "1436473264");
+    ret85.add(transaction);
+
+    ret.add("85", ret85);
+
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    expect(
+        connection.call(eq("maniphest.gettasktransactions"),
+            capture(paramsCapture))).andReturn(ret).once();
+
+    replayMocks();
+
+    final ManiphestModule module = getModule();
+    final ManiphestModule.GetTaskTransactionsResult result = module
+        .getTaskTransactions(Arrays.asList(84, 85));
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertEquals("'ids' does not match in params", Arrays.asList(84, 85),
+        params.get("ids"));
+
+    final ManiphestModule.GetTaskTransactionsResult expected = new ManiphestModule.GetTaskTransactionsResult();
+    SingleGetTaskTransactionsResult transactions = new SingleGetTaskTransactionsResult();
+    transactions.add(new TaskTransaction("84",
+        "PHID-XACT-TASK-xhbr4gj7ca224b2", "priority", null, 25.0, null,
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "1436473263"));
+    transactions.add(new TaskTransaction("84",
+        "PHID-XACT-TASK-xhbr4gj7ca224b3", "title", "foo", "bar", "commentBar",
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "1436473263"));
+    expected.put("84", transactions);
+    transactions = new SingleGetTaskTransactionsResult();
+    transactions.add(new TaskTransaction("85",
+        "PHID-XACT-TASK-xhbr4gj7ca224b4", "core:subscribers", Arrays.asList(),
+        Arrays.asList("user1", "user2"), "commentFoo",
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "1436473264"));
+    expected.put("85", transactions);
 
     assertEquals("Results do not match", expected, result);
   }

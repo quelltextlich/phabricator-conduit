@@ -13,6 +13,7 @@
 // limitations under the License.
 package at.quelltextlich.phabricator.conduit.raw;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import at.quelltextlich.phabricator.conduit.ConduitException;
 import at.quelltextlich.phabricator.conduit.bare.Connection;
 
 import com.google.gson.JsonElement;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Module for Conduit methods starting in 'maniphest.'
@@ -107,6 +109,258 @@ public class ManiphestModule extends Module {
           isClosed, priority, priorityColor, title, description, projectPHIDs,
           uri, auxiliary, objectName, dateCreated, dateModified,
           dependsOnTaskPHIDs);
+    }
+  }
+
+  /**
+   * Runs the API's 'maniphest.getTaskTransactions' method
+   */
+  public GetTaskTransactionsResult getTaskTransactions(final List<Integer> ids)
+      throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("ids", ids);
+
+    final JsonElement callResult = connection.call(
+        "maniphest.gettasktransactions", params);
+    final GetTaskTransactionsResult result = gson.fromJson(callResult,
+        GetTaskTransactionsResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'maniphest.gettasktransactions'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "85": [
+   *     {
+   *       "taskID": "85",
+   *       "transactionPHID": "PHID-XACT-TASK-o3ofscpf5cs3wj3",
+   *       "transactionType": "core:comment",
+   *       "oldValue": null,
+   *       "newValue": null,
+   *       "comments": "Test comment",
+   *       "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *       "dateCreated": "1436473965"
+   *     },
+   *     {
+   *       "taskID": "85",
+   *       "transactionPHID": "PHID-XACT-TASK-7o4g3dpn6izhslq",
+   *       "transactionType": "priority",
+   *       "oldValue": 25,
+   *       "newValue": 80,
+   *       "comments": null,
+   *       "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *       "dateCreated": "1436473961"
+   *     }
+   *   ],
+   *   "86": [
+   *     {
+   *       "taskID": "86",
+   *       "transactionPHID": "PHID-XACT-TASK-xhbr4gj7ca224b2",
+   *       "transactionType": "priority",
+   *       "oldValue": null,
+   *       "newValue": 25,
+   *       "comments": null,
+   *       "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *       "dateCreated": "1436473263"
+   *     },
+   *     {
+   *       "taskID": "86",
+   *       "transactionPHID": "PHID-XACT-TASK-ghyh4ue3p4m3yqz",
+   *       "transactionType": "core:subscribers",
+   *       "oldValue": [],
+   *       "newValue": [
+   *         "PHID-USER-3nphm6xkw2mpyfshq4dq"
+   *       ],
+   *       "comments": null,
+   *       "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *       "dateCreated": "1436473263"
+   *     },
+   *     {
+   *       "taskID": "86",
+   *       "transactionPHID": "PHID-XACT-TASK-icdkynz2de3wuf2",
+   *       "transactionType": "status",
+   *       "oldValue": null,
+   *       "newValue": "open",
+   *       "comments": null,
+   *       "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *       "dateCreated": "1436473263"
+   *     }
+   *   ],
+   * }
+   * </pre>
+   */
+  public static class GetTaskTransactionsResult extends
+      HashMap<String, SingleGetTaskTransactionsResult> {
+    private static final long serialVersionUID = 1L;
+  }
+
+  public static class SingleGetTaskTransactionsResult extends
+      ArrayList<TaskTransaction> {
+    private static final long serialVersionUID = 1L;
+  }
+
+  public static class TaskTransaction {
+    @SerializedName("taskID")
+    private final String taskId;
+    @SerializedName("transactionPHID")
+    private final String transactionPhid;
+    private final String transactionType;
+    private final Object oldValue;
+    private final Object newValue;
+    private final String comments;
+    @SerializedName("authorPHID")
+    private final String authorPhid;
+    private final String dateCreated;
+
+    public TaskTransaction(final String taskId, final String transactionPhid,
+        final String transactionType, final Object oldValue,
+        final Object newValue, final String comments, final String authorPhid,
+        final String dateCreated) {
+      super();
+      this.taskId = taskId;
+      this.transactionPhid = transactionPhid;
+      this.transactionType = transactionType;
+      this.oldValue = oldValue;
+      this.newValue = newValue;
+      this.comments = comments;
+      this.authorPhid = authorPhid;
+      this.dateCreated = dateCreated;
+    }
+
+    public String getTaskId() {
+      return taskId;
+    }
+
+    public String getTransactionPhid() {
+      return transactionPhid;
+    }
+
+    public String getTransactionType() {
+      return transactionType;
+    }
+
+    public Object getOldValue() {
+      return oldValue;
+    }
+
+    public Object getNewValue() {
+      return newValue;
+    }
+
+    public String getComments() {
+      return comments;
+    }
+
+    public String getAuthorPhid() {
+      return authorPhid;
+    }
+
+    public String getDateCreated() {
+      return dateCreated;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result
+          + ((authorPhid == null) ? 0 : authorPhid.hashCode());
+      result = prime * result + ((comments == null) ? 0 : comments.hashCode());
+      result = prime * result
+          + ((dateCreated == null) ? 0 : dateCreated.hashCode());
+      result = prime * result + ((newValue == null) ? 0 : newValue.hashCode());
+      result = prime * result + ((oldValue == null) ? 0 : oldValue.hashCode());
+      result = prime * result + ((taskId == null) ? 0 : taskId.hashCode());
+      result = prime * result
+          + ((transactionPhid == null) ? 0 : transactionPhid.hashCode());
+      result = prime * result
+          + ((transactionType == null) ? 0 : transactionType.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final TaskTransaction other = (TaskTransaction) obj;
+      if (authorPhid == null) {
+        if (other.authorPhid != null) {
+          return false;
+        }
+      } else if (!authorPhid.equals(other.authorPhid)) {
+        return false;
+      }
+      if (comments == null) {
+        if (other.comments != null) {
+          return false;
+        }
+      } else if (!comments.equals(other.comments)) {
+        return false;
+      }
+      if (dateCreated == null) {
+        if (other.dateCreated != null) {
+          return false;
+        }
+      } else if (!dateCreated.equals(other.dateCreated)) {
+        return false;
+      }
+      if (newValue == null) {
+        if (other.newValue != null) {
+          return false;
+        }
+      } else if (!newValue.equals(other.newValue)) {
+        return false;
+      }
+      if (oldValue == null) {
+        if (other.oldValue != null) {
+          return false;
+        }
+      } else if (!oldValue.equals(other.oldValue)) {
+        return false;
+      }
+      if (taskId == null) {
+        if (other.taskId != null) {
+          return false;
+        }
+      } else if (!taskId.equals(other.taskId)) {
+        return false;
+      }
+      if (transactionPhid == null) {
+        if (other.transactionPhid != null) {
+          return false;
+        }
+      } else if (!transactionPhid.equals(other.transactionPhid)) {
+        return false;
+      }
+      if (transactionType == null) {
+        if (other.transactionType != null) {
+          return false;
+        }
+      } else if (!transactionType.equals(other.transactionType)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "TaskTransactionResult [taskId=" + taskId + ", transactionPhid="
+          + transactionPhid + ", transactionType=" + transactionType
+          + ", oldValue=" + oldValue + ", newValue=" + newValue + ", comments="
+          + comments + ", authorPhid=" + authorPhid + ", dateCreated="
+          + dateCreated + "]";
     }
   }
 
