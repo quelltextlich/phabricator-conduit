@@ -81,6 +81,61 @@ public class PhidModuleTest extends ModuleTestCase {
     assertEquals("Call results do not match", expected, result);
   }
 
+  public void testQueryPass() throws Exception {
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    final JsonObject retT84 = new JsonObject();
+    retT84.addProperty("phid", "PHID-TASK-bto8xi3333rmlvrqdzr7");
+    retT84.addProperty("uri", "https://phab.local/T84");
+    retT84.addProperty("typeName", "typeName-T84");
+    retT84.addProperty("type", "type-T84");
+    retT84.addProperty("name", "T84");
+    retT84.addProperty("fullName", "T84: test Task");
+    retT84.addProperty("status", "open");
+
+    final JsonObject retT85 = new JsonObject();
+    retT85.addProperty("phid", "PHID-TASK-jpnuseiiujvw6f7vvnfp");
+    retT85.addProperty("uri", "https://phab.local/T85");
+    retT85.addProperty("typeName", "typeName-T85");
+    retT85.addProperty("type", "type-T85");
+    retT85.addProperty("name", "T85");
+    retT85.addProperty("fullName", "T85: test Task");
+    retT85.addProperty("status", "closed");
+
+    final JsonObject ret = new JsonObject();
+    ret.add("PHID-TASK-bto8xi3333rmlvrqdzr7", retT84);
+    ret.add("PHID-TASK-jpnuseiiujvw6f7vvnfp", retT85);
+
+    expect(connection.call(eq("phid.lookup"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final PhidModule module = getModule();
+    final PhidModule.LookupResult result = module.lookup(Arrays.asList(
+        "PHID-TASK-bto8xi3333rmlvrqdzr7", "PHID-TASK-jpnuseiiujvw6f7vvnfp"));
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertEquals("TaskResult id is not set", Arrays.asList(
+        "PHID-TASK-bto8xi3333rmlvrqdzr7", "PHID-TASK-jpnuseiiujvw6f7vvnfp"),
+        params.get("names"));
+    assertHasSessionKey(params);
+
+    final PhidModule.LookupResult expected = new PhidModule.LookupResult();
+
+    final SinglePhidResult T84 = new SinglePhidResult(
+        "PHID-TASK-bto8xi3333rmlvrqdzr7", "https://phab.local/T84",
+        "typeName-T84", "type-T84", "T84", "T84: test Task", "open");
+    expected.put("PHID-TASK-bto8xi3333rmlvrqdzr7", T84);
+
+    final SinglePhidResult T85 = new SinglePhidResult(
+        "PHID-TASK-jpnuseiiujvw6f7vvnfp", "https://phab.local/T85",
+        "typeName-T85", "type-T85", "T85", "T85: test Task", "closed");
+    expected.put("PHID-TASK-jpnuseiiujvw6f7vvnfp", T85);
+
+    assertEquals("Call results do not match", expected, result);
+  }
+
   @Override
   protected PhidModule getModule() {
     return new PhidModule(connection, sessionHandler);

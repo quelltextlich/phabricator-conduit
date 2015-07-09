@@ -215,4 +215,50 @@ public class PhidModule extends Module {
           + fullName + ", status=" + status + "]";
     }
   }
+
+  /**
+   * Runs the API's 'phid.query' method
+   */
+  public QueryResult query(final Iterable<String> phids)
+      throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("phids", phids);
+
+    final JsonElement callResult = connection.call("phid.query", params);
+    final QueryResult result = gson.fromJson(callResult, QueryResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to phid.query
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "PHID-TASK-bto8xi3333rmlvrqdzr7": {
+   *     "phid": "PHID-TASK-bto8xi3333rmlvrqdzr7",
+   *     "uri": "https:\/\/phab.local\/T85",
+   *     "typeName": "Task",
+   *     "type": "TASK",
+   *     "name": "T85",
+   *     "fullName": "T85: qchris-test-task",
+   *     "status": "open"
+   *   },
+   *   "PHID-TASK-jpnuseiiujvw6f7vvnfp": {
+   *     "phid": "PHID-TASK-jpnuseiiujvw6f7vvnfp",
+   *     "uri": "https:\/\/phab.local\/T84",
+   *     "typeName": "Task",
+   *     "type": "TASK",
+   *     "name": "T84",
+   *     "fullName": "T84: Test task for my testproject",
+   *     "status": "closed"
+   *   }
+   * }
+   * </pre>
+   */
+  public static class QueryResult extends PhidResult {
+    private static final long serialVersionUID = 1L;
+  }
 }
