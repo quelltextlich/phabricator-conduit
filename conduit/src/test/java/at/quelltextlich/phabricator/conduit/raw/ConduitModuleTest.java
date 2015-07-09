@@ -61,7 +61,9 @@ public class ConduitModuleTest extends ModuleTestCase {
 
   public void testConnectPass() throws Exception {
     final JsonObject ret = new JsonObject();
-    ret.add("sessionKey", new JsonPrimitive("KeyFoo"));
+    ret.addProperty("connectionID", 42);
+    ret.addProperty("sessionKey", "sessionKeyFoo");
+    ret.addProperty("userPHID", "userFoo");
 
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
@@ -71,13 +73,14 @@ public class ConduitModuleTest extends ModuleTestCase {
     replayMocks();
 
     final ConduitModule module = getModule();
-    final ConduitModule.ConnectResult connectResult = module.connect();
+    final ConduitModule.ConnectResult result = module.connect();
 
     final Map<String, Object> params = paramsCapture.getValue();
     assertEquals("Usernames do not match", "userFoo", params.get("user"));
 
-    assertEquals("Session keys don't match", "KeyFoo",
-        connectResult.getSessionKey());
+    final ConduitModule.ConnectResult expected = new ConduitModule.ConnectResult(
+        42, "sessionKeyFoo", "userFoo");
+    assertEquals("Results do not match", expected, result);
   }
 
   public void testConduitConnectConnectionFail() throws Exception {

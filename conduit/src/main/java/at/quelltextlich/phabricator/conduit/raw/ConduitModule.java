@@ -175,9 +175,17 @@ public class ConduitModule extends Module {
    * </pre>
    */
   public static class ConnectResult {
-    private int connectionID;
-    private String sessionKey;
-    private String userPHID;
+    private final int connectionID;
+    private final String sessionKey;
+    private final String userPHID;
+
+    public ConnectResult(final int connectionID, final String sessionKey,
+        final String userPHID) {
+      super();
+      this.connectionID = connectionID;
+      this.sessionKey = sessionKey;
+      this.userPHID = userPHID;
+    }
 
     public int getConnectionId() {
       return connectionID;
@@ -187,12 +195,57 @@ public class ConduitModule extends Module {
       return sessionKey;
     }
 
-    public void setSessionKey(final String sessionKey) {
-      this.sessionKey = sessionKey;
-    }
-
     public String getUserPhId() {
       return userPHID;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + connectionID;
+      result = prime * result
+          + ((sessionKey == null) ? 0 : sessionKey.hashCode());
+      result = prime * result + ((userPHID == null) ? 0 : userPHID.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final ConnectResult other = (ConnectResult) obj;
+      if (connectionID != other.connectionID) {
+        return false;
+      }
+      if (sessionKey == null) {
+        if (other.sessionKey != null) {
+          return false;
+        }
+      } else if (!sessionKey.equals(other.sessionKey)) {
+        return false;
+      }
+      if (userPHID == null) {
+        if (other.userPHID != null) {
+          return false;
+        }
+      } else if (!userPHID.equals(other.userPHID)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "ConnectResult [connectionID=" + connectionID + ", sessionKey="
+          + sessionKey + ", userPHID=" + userPHID + "]";
     }
   }
 

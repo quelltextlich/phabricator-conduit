@@ -35,8 +35,8 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionEmptyParams() throws ConduitException {
-    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult();
-    connectResult.setSessionKey("sessionKeyFoo");
+    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult(
+        1, "sessionKeyFoo", "userBar");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);
     expect(conduitModule.connect()).andReturn(connectResult);
@@ -56,8 +56,8 @@ public class OnDemandSessionHandlerTest extends SessionTestCase {
   }
 
   public void testFillInSessionReuseSessios() throws ConduitException {
-    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult();
-    connectResult.setSessionKey("sessionKeyFoo");
+    final ConduitModule.ConnectResult connectResult = new ConduitModule.ConnectResult(
+        2, "sessionKeyFoo", "userBar");
 
     final ConduitModule conduitModule = createMock(ConduitModule.class);
     expect(conduitModule.connect()).andReturn(connectResult).once();
