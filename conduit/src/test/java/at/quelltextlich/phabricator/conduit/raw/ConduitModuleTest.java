@@ -17,12 +17,14 @@ import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import org.easymock.Capture;
 
 import at.quelltextlich.phabricator.conduit.ConduitException;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -109,18 +111,29 @@ public class ConduitModuleTest extends ModuleTestCase {
   public void testGetCapabilitiesPass() throws Exception {
     final Capture<Map<String, Object>> paramsCapture = createCapture();
 
-    final JsonObject retRelevant = new JsonObject();
+    final JsonObject ret = new JsonObject();
+    final JsonArray outputs = new JsonArray();
+    outputs.add(new JsonPrimitive("foo"));
+    outputs.add(new JsonPrimitive("bar"));
+    ret.add("output", outputs);
+
+    final JsonArray inputs = new JsonArray();
+    inputs.add(new JsonPrimitive("baz"));
+    ret.add("input", inputs);
 
     expect(
         connection.call(eq("conduit.getcapabilities"), capture(paramsCapture)))
-        .andReturn(retRelevant).once();
+        .andReturn(ret).once();
 
     replayMocks();
 
     final ConduitModule module = getModule();
-    final ConduitModule.GetCapabilitiesResult getCapabilitiesResult = module
-        .getCapabilities();
-    assertNotNull("Result is null", getCapabilitiesResult);
+    final ConduitModule.GetCapabilitiesResult result = module.getCapabilities();
+
+    final ConduitModule.GetCapabilitiesResult expected = new ConduitModule.GetCapabilitiesResult();
+    expected.put("output", Arrays.asList("foo", "bar"));
+    expected.put("input", Arrays.asList("baz"));
+    assertEquals("Results do not match", expected, result);
   }
 
   public void testGetCertificatePass() throws Exception {
