@@ -27,6 +27,74 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class UserModuleTest extends ModuleTestCase {
+  public void testQueryPass() throws Exception {
+    final JsonArray ret = new JsonArray();
+
+    JsonObject userRet = new JsonObject();
+    userRet.addProperty("phid", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    userRet.addProperty("userName", "qchris");
+    userRet.addProperty("realName", "John Doe");
+    userRet.addProperty("image", "http://www.example.com/image.png");
+    userRet.addProperty("uri", "http://www.example.com/");
+    JsonArray rolesRet = new JsonArray();
+    rolesRet.add(new JsonPrimitive("approved"));
+    rolesRet.add(new JsonPrimitive("activated"));
+    userRet.add("roles", rolesRet);
+    ret.add(userRet);
+
+    userRet = new JsonObject();
+    userRet.addProperty("phid", "PHID-USER-3nphm6xkw2mpyfshq4dr");
+    userRet.addProperty("userName", "frank.the.tank");
+    userRet.addProperty("realName", "Frank Tank");
+    userRet.addProperty("image", "http://www.example.com/image-tank.png");
+    userRet.addProperty("uri", "http://www.example.com/tank");
+    rolesRet = new JsonArray();
+    rolesRet.add(new JsonPrimitive("tankified"));
+    userRet.add("roles", rolesRet);
+    ret.add(userRet);
+
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    expect(connection.call(eq("user.query"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final UserModule module = getModule();
+    final UserModule.QueryResult result = module.query(Arrays.asList("qchris",
+        "frank.the.tank"), Arrays.asList("foo@example.org", "bar@example.org"),
+        Arrays.asList("John Doe", "Frank Tank"),
+        Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq",
+            "PHID-USER-3nphm6xkw2mpyfshq4dr"), Arrays.asList(42, 43), 3, 5);
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertEquals("'usernames' does not match in params",
+        Arrays.asList("qchris", "frank.the.tank"), params.get("usernames"));
+    assertEquals("'emails' does not match in params",
+        Arrays.asList("foo@example.org", "bar@example.org"),
+        params.get("emails"));
+    assertEquals("'realnames' does not match in params",
+        Arrays.asList("John Doe", "Frank Tank"), params.get("realnames"));
+    assertEquals("'phids' does not match in params", Arrays.asList(
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        params.get("phids"));
+    assertEquals("'ids' does not match in params", Arrays.asList(42, 43),
+        params.get("ids"));
+    assertEquals("'offset' does not match in params", 3, params.get("offset"));
+    assertEquals("'limit' does not match in params", 5, params.get("limit"));
+
+    final UserModule.QueryResult expected = new UserModule.QueryResult();
+    expected.add(new UserModule.UserResult("PHID-USER-3nphm6xkw2mpyfshq4dq",
+        "qchris", "John Doe", "http://www.example.com/image.png",
+        "http://www.example.com/", Arrays.asList("approved", "activated")));
+    expected.add(new UserModule.UserResult("PHID-USER-3nphm6xkw2mpyfshq4dr",
+        "frank.the.tank", "Frank Tank",
+        "http://www.example.com/image-tank.png", "http://www.example.com/tank",
+        Arrays.asList("tankified")));
+    assertEquals("Results do not match", expected, result);
+  }
+
   public void testWhoAmIPass() throws Exception {
     final JsonObject ret = new JsonObject();
     ret.addProperty("phid", "PHID-USER-3nphm6xkw2mpyfshq4dq");

@@ -13,6 +13,7 @@
 // limitations under the License.
 package at.quelltextlich.phabricator.conduit.raw;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,64 @@ public class UserModule extends Module {
   public UserModule(final Connection connection,
       final SessionHandler sessionHandler) {
     super(connection, sessionHandler);
+  }
+
+  /**
+   * Runs the API's 'user.query' method
+   */
+  public QueryResult query(final List<String> usernames,
+      final List<String> emails, final List<String> realNames,
+      final List<String> phids, final List<Integer> ids, final Integer offset,
+      final Integer limit) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("usernames", usernames);
+    params.put("emails", emails);
+    params.put("realnames", realNames);
+    params.put("phids", phids);
+    params.put("ids", ids);
+    params.put("offset", offset);
+    params.put("limit", limit);
+
+    final JsonElement callResult = connection.call("user.query", params);
+    final QueryResult result = gson.fromJson(callResult, QueryResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'user.whoami'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * [
+   *   "phid": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *   "userName": "qchris",
+   *   "realName": "",
+   *   "image": "https:\/\/phabricator.local\/res\/phabricator\/3eb28cd9\/rsrc\/image\/avatar.png",
+   *   "uri": "https:\/\/phabricator.local\/p\/qchris\/",
+   *   "roles": [
+   *     "unverified",
+   *     "approved",
+   *     "activated"
+   *   ]
+   * ],
+   * [
+   *   "phid": "PHID-USER-fuvfkcymy3moyww3frkv",
+   *   "userName": "frank.the.tank",
+   *   "realName": "frank",
+   *   "image": "https:\/\/phabricator.local\/res\/phabricator\/3eb28cd9\/rsrc\/image\/avatar.png",
+   *   "uri": "https:\/\/phabricator.local\/p\/frank.the.tank\/",
+   *   "roles": [
+   *     "unverified",
+   *     "approved",
+   *     "activated"
+   *   ]
+   * ]
+   * </pre>
+   */
+  public static class QueryResult extends ArrayList<UserResult> {
+    private static final long serialVersionUID = 1L;
   }
 
   /**
@@ -64,7 +123,15 @@ public class UserModule extends Module {
    * }
    * </pre>
    */
-  public static class WhoAmIResult {
+  public static class WhoAmIResult extends UserResult {
+    public WhoAmIResult(final String phid, final String userName,
+        final String realName, final String image, final String uri,
+        final List<String> roles) {
+      super(phid, userName, realName, image, uri, roles);
+    }
+  }
+
+  public static class UserResult {
     private final String phid;
     private final String userName;
     private final String realName;
@@ -72,7 +139,7 @@ public class UserModule extends Module {
     private final String uri;
     private final List<String> roles;
 
-    public WhoAmIResult(final String phid, final String userName,
+    public UserResult(final String phid, final String userName,
         final String realName, final String image, final String uri,
         final List<String> roles) {
       super();
@@ -132,7 +199,7 @@ public class UserModule extends Module {
       if (getClass() != obj.getClass()) {
         return false;
       }
-      final WhoAmIResult other = (WhoAmIResult) obj;
+      final UserResult other = (UserResult) obj;
       if (image == null) {
         if (other.image != null) {
           return false;
@@ -180,7 +247,7 @@ public class UserModule extends Module {
 
     @Override
     public String toString() {
-      return "WhoAmIResult [phid=" + phid + ", userName=" + userName
+      return "UserResult [phid=" + phid + ", userName=" + userName
           + ", realName=" + realName + ", image=" + image + ", uri=" + uri
           + ", roles=" + roles + "]";
     }
