@@ -26,12 +26,15 @@ public class Conduit {
   public final ConduitModule conduit;
   public final ManiphestModule maniphest;
   public final PhidModule phid;
+  public final ProjectModule project;
 
   public Conduit(final ConduitModule conduitModule,
-      final ManiphestModule maniphestModule, final PhidModule phidModule) {
+      final ManiphestModule maniphestModule, final PhidModule phidModule,
+      final ProjectModule projectModule) {
     conduit = conduitModule;
     maniphest = maniphestModule;
     phid = phidModule;
+    project = projectModule;
   }
 
   /**
@@ -59,5 +62,14 @@ public class Conduit {
    */
   public PhidModule getPhidModule() {
     return phid;
+  }
+
+  /**
+   * Gets the current ProjectModule
+   *
+   * @return Gets the current ProjectModule
+   */
+  public ProjectModule getProjectModule() {
+    return project;
   }
 }
