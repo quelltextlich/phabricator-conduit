@@ -661,6 +661,61 @@ public class ManiphestModuleTest extends ModuleTestCase {
     assertEquals("Results do not match", expected, result);
   }
 
+  public void testQueryStatusesPass() throws Exception {
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    final JsonObject ret = new JsonObject();
+    ret.addProperty("defaultStatus", "defStatus");
+    ret.addProperty("defaultClosedStatus", "defClosedStatus");
+    ret.addProperty("duplicateStatus", "dupe");
+
+    final JsonArray openStatuses = new JsonArray();
+    openStatuses.add(new JsonPrimitive("open1"));
+    openStatuses.add(new JsonPrimitive("open2"));
+    ret.add("openStatuses", openStatuses);
+
+    final JsonObject closedStatuses = new JsonObject();
+    closedStatuses.addProperty("1", "closed1");
+    closedStatuses.addProperty("2", "closed2");
+    ret.add("closedStatuses", closedStatuses);
+
+    final JsonArray allStatuses = new JsonArray();
+    allStatuses.add(new JsonPrimitive("open1"));
+    allStatuses.add(new JsonPrimitive("closed2"));
+    ret.add("allStatuses", allStatuses);
+
+    final JsonObject statusMap = new JsonObject();
+    statusMap.addProperty("foo", "bar");
+    statusMap.addProperty("cowa", "bunga");
+    ret.add("statusMap", statusMap);
+
+    expect(
+        connection.call(eq("maniphest.querystatuses"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final ManiphestModule module = getModule();
+    final ManiphestModule.QueryStatusesResult result = module.queryStatuses();
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+
+    final Map<String, String> expClosedStatuses = new HashMap<String, String>();
+    expClosedStatuses.put("1", "closed1");
+    expClosedStatuses.put("2", "closed2");
+
+    final Map<String, String> expStatusMap = new HashMap<String, String>();
+    expStatusMap.put("foo", "bar");
+    expStatusMap.put("cowa", "bunga");
+    final ManiphestModule.QueryStatusesResult expected = new ManiphestModule.QueryStatusesResult(
+        "defStatus", "defClosedStatus", "dupe",
+        Arrays.asList("open1", "open2"), expClosedStatuses, Arrays.asList(
+            "open1", "closed2"), expStatusMap);
+
+    assertEquals("Results do not match", expected, result);
+  }
+
   @Override
   protected ManiphestModule getModule() {
     return new ManiphestModule(connection, sessionHandler);

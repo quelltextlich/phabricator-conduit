@@ -957,4 +957,205 @@ public class ManiphestModule extends Module {
   public static class QueryResult extends HashMap<String, TaskResult> {
     private static final long serialVersionUID = 1L;
   }
+
+  /**
+   * Runs the API's 'maniphest.querystatuses' method
+   */
+  public QueryStatusesResult queryStatuses() throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+
+    final JsonElement callResult = connection.call("maniphest.querystatuses",
+        params);
+    final QueryStatusesResult result = gson.fromJson(callResult,
+        QueryStatusesResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to maniphest.querystatuses
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "defaultStatus": "open",
+   *   "defaultClosedStatus": "resolved",
+   *   "duplicateStatus": "duplicate",
+   *   "openStatuses": [
+   *     "open",
+   *     "stalled"
+   *   ],
+   *   "closedStatuses": {
+   *     "1": "resolved",
+   *     "3": "declined",
+   *     "4": "duplicate",
+   *     "5": "invalid"
+   *   },
+   *   "allStatuses": [
+   *     "open",
+   *     "resolved",
+   *     "stalled",
+   *     "declined",
+   *     "duplicate",
+   *     "invalid"
+   *   ],
+   *   "statusMap": {
+   *     "open": "Open",
+   *     "resolved": "Resolved",
+   *     "stalled": "Stalled",
+   *     "declined": "Declined",
+   *     "duplicate": "Duplicate",
+   *     "invalid": "Invalid"
+   *   }
+   * }
+   * </pre>
+   */
+  public static class QueryStatusesResult {
+    private final String defaultStatus;
+    private final String defaultClosedStatus;
+    private final String duplicateStatus;
+    private final List<String> openStatuses;
+    private final Map<String, String> closedStatuses;
+    private final List<String> allStatuses;
+    private final Map<String, String> statusMap;
+
+    public QueryStatusesResult(final String defaultStatus,
+        final String defaultClosedStatus, final String duplicateStatus,
+        final List<String> openStatuses,
+        final Map<String, String> closedStatuses,
+        final List<String> allStatuses, final Map<String, String> statusMap) {
+      super();
+      this.defaultStatus = defaultStatus;
+      this.defaultClosedStatus = defaultClosedStatus;
+      this.duplicateStatus = duplicateStatus;
+      this.openStatuses = openStatuses;
+      this.closedStatuses = closedStatuses;
+      this.allStatuses = allStatuses;
+      this.statusMap = statusMap;
+    }
+
+    public String getDefaultStatus() {
+      return defaultStatus;
+    }
+
+    public String getDefaultClosedStatus() {
+      return defaultClosedStatus;
+    }
+
+    public String getDuplicateStatus() {
+      return duplicateStatus;
+    }
+
+    public List<String> getOpenStatuses() {
+      return openStatuses;
+    }
+
+    public Map<String, String> getClosedStatuses() {
+      return closedStatuses;
+    }
+
+    public List<String> getAllStatuses() {
+      return allStatuses;
+    }
+
+    public Map<String, String> getStatusMap() {
+      return statusMap;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result
+          + ((allStatuses == null) ? 0 : allStatuses.hashCode());
+      result = prime * result
+          + ((closedStatuses == null) ? 0 : closedStatuses.hashCode());
+      result = prime
+          * result
+          + ((defaultClosedStatus == null) ? 0 : defaultClosedStatus.hashCode());
+      result = prime * result
+          + ((defaultStatus == null) ? 0 : defaultStatus.hashCode());
+      result = prime * result
+          + ((duplicateStatus == null) ? 0 : duplicateStatus.hashCode());
+      result = prime * result
+          + ((openStatuses == null) ? 0 : openStatuses.hashCode());
+      result = prime * result
+          + ((statusMap == null) ? 0 : statusMap.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final QueryStatusesResult other = (QueryStatusesResult) obj;
+      if (allStatuses == null) {
+        if (other.allStatuses != null) {
+          return false;
+        }
+      } else if (!allStatuses.equals(other.allStatuses)) {
+        return false;
+      }
+      if (closedStatuses == null) {
+        if (other.closedStatuses != null) {
+          return false;
+        }
+      } else if (!closedStatuses.equals(other.closedStatuses)) {
+        return false;
+      }
+      if (defaultClosedStatus == null) {
+        if (other.defaultClosedStatus != null) {
+          return false;
+        }
+      } else if (!defaultClosedStatus.equals(other.defaultClosedStatus)) {
+        return false;
+      }
+      if (defaultStatus == null) {
+        if (other.defaultStatus != null) {
+          return false;
+        }
+      } else if (!defaultStatus.equals(other.defaultStatus)) {
+        return false;
+      }
+      if (duplicateStatus == null) {
+        if (other.duplicateStatus != null) {
+          return false;
+        }
+      } else if (!duplicateStatus.equals(other.duplicateStatus)) {
+        return false;
+      }
+      if (openStatuses == null) {
+        if (other.openStatuses != null) {
+          return false;
+        }
+      } else if (!openStatuses.equals(other.openStatuses)) {
+        return false;
+      }
+      if (statusMap == null) {
+        if (other.statusMap != null) {
+          return false;
+        }
+      } else if (!statusMap.equals(other.statusMap)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "QueryStatusesResult [defaultStatus=" + defaultStatus
+          + ", defaultClosedStatus=" + defaultClosedStatus
+          + ", duplicateStatus=" + duplicateStatus + ", openStatuses="
+          + openStatuses + ", closedStatuses=" + closedStatuses
+          + ", allStatuses=" + allStatuses + ", statusMap=" + statusMap + "]";
+    }
+  }
 }
