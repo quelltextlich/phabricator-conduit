@@ -526,6 +526,141 @@ public class ManiphestModuleTest extends ModuleTestCase {
     assertEquals("TaskResult id is not set", 42, paramsRelevant.get("id"));
   }
 
+  public void testQueryPass() throws Exception {
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    final JsonObject ret = new JsonObject();
+
+    JsonObject retTask = new JsonObject();
+    JsonArray ccRet = new JsonArray();
+    ccRet.add(new JsonPrimitive("cc1"));
+    ccRet.add(new JsonPrimitive("cc2"));
+    JsonObject auxiliaryRet = new JsonObject();
+    auxiliaryRet.add("std:maniphest:security_topic", null);
+    auxiliaryRet.add("isdc:sprint:storypoints", null);
+    retTask.addProperty("id", 84);
+    retTask.addProperty("phid", "PHID-TASK-btorxi3333rmlvrqdzr7");
+    retTask.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    retTask.addProperty("ownerPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    retTask.add("ccPHIDs", ccRet);
+    retTask.addProperty("status", "open");
+    retTask.addProperty("statusName", "Open");
+    retTask.addProperty("isClosed", false);
+    retTask.addProperty("priority", "Needs Triage");
+    retTask.addProperty("priorityColor", "violet");
+    retTask.addProperty("title", "qchris-test-task");
+    retTask.addProperty("description", "foo");
+    retTask.add("projectPHIDs", new JsonArray());
+    retTask.addProperty("uri", "https://phabricator.local/T84");
+    retTask.add("auxiliary", auxiliaryRet);
+    retTask.addProperty("objectName", "T84");
+    retTask.addProperty("dateCreated", "1436304454");
+    retTask.addProperty("dateModified", "1436304469");
+    retTask.add("dependsOnTaskPHIDs", new JsonArray());
+    ret.add("PHID-TASK-btorxi3333rmlvrqdzr7", retTask);
+
+    retTask = new JsonObject();
+    ccRet = new JsonArray();
+    ccRet.add(new JsonPrimitive("cc1"));
+    ccRet.add(new JsonPrimitive("cc3"));
+    auxiliaryRet = new JsonObject();
+    auxiliaryRet.add("std:maniphest:security_topic2", null);
+    auxiliaryRet.add("isdc:sprint:storypoints2", null);
+    retTask.addProperty("id", 85);
+    retTask.addProperty("phid", "PHID-TASK-btorxi3333rmlvrqdzr8");
+    retTask.addProperty("authorPHID", "PHID-USER-3nphm6xkw2mpyfshq4dr");
+    retTask.addProperty("ownerPHID", "PHID-USER-3nphm6xkw2mpyfshq4dq");
+    retTask.add("ccPHIDs", ccRet);
+    retTask.addProperty("status", "open");
+    retTask.addProperty("statusName", "Open");
+    retTask.addProperty("isClosed", false);
+    retTask.addProperty("priority", "Needs Triage");
+    retTask.addProperty("priorityColor", "violet");
+    retTask.addProperty("title", "qchris-test-task");
+    retTask.addProperty("description", "foo");
+    retTask.add("projectPHIDs", new JsonArray());
+    retTask.addProperty("uri", "https://phabricator.local/T85");
+    retTask.add("auxiliary", auxiliaryRet);
+    retTask.addProperty("objectName", "T85");
+    retTask.addProperty("dateCreated", "1436304455");
+    retTask.addProperty("dateModified", "1436304470");
+    retTask.add("dependsOnTaskPHIDs", new JsonArray());
+    ret.add("PHID-TASK-btorxi3333rmlvrqdzr8", retTask);
+
+    expect(connection.call(eq("maniphest.query"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final ManiphestModule module = getModule();
+    final ManiphestModule.QueryResult result = module.query(Arrays.asList(84,
+        85, 86), Arrays.asList("PHID-TASK-btorxi3333rmlvrqdzr7",
+        "PHID-TASK-btorxi3333rmlvrqdzr8", "PHID-TASK-btorxi3333rmlvrqdzr9"),
+        Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq",
+            "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq",
+            "PHID-USER-3nphm6xkw2mpyfshq4dr"), Arrays.asList("PHID-PROJ-foo",
+            "PHID-PROJ-bar", "PHID-PROJ-baz"), Arrays.asList("cc1", "cc2",
+            "cc3"), "Lorem ipsum", "status-any", "order-created", 3, 10);
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertEquals("'ids' do not match in params", Arrays.asList(84, 85, 86),
+        params.get("ids"));
+    assertEquals("'phids' do not match in params", Arrays.asList(
+        "PHID-TASK-btorxi3333rmlvrqdzr7", "PHID-TASK-btorxi3333rmlvrqdzr8",
+        "PHID-TASK-btorxi3333rmlvrqdzr9"), params.get("phids"));
+    assertEquals("'ownerPHIDs' do not match in params", Arrays.asList(
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        params.get("ownerPHIDs"));
+    assertEquals("'authorPHIDs' do not match in params", Arrays.asList(
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        params.get("authorPHIDs"));
+    assertEquals("'projectPHIDs' do not match in params",
+        Arrays.asList("PHID-PROJ-foo", "PHID-PROJ-bar", "PHID-PROJ-baz"),
+        params.get("projectPHIDs"));
+    assertEquals("'ccPHIDs' do not match in params",
+        Arrays.asList("cc1", "cc2", "cc3"), params.get("ccPHIDs"));
+    assertEquals("'fullText' does not match in params", "Lorem ipsum",
+        params.get("fullText"));
+    assertEquals("'status' does not match in params", "status-any",
+        params.get("status"));
+    assertEquals("'order' does not match in params", "order-created",
+        params.get("order"));
+    assertEquals("'limit' does not match in params", 3, params.get("limit"));
+    assertEquals("'offset' does not match in params", 10, params.get("offset"));
+
+    Map<String, String> auxiliary = new HashMap<String, String>();
+    auxiliary.put("std:maniphest:security_topic", null);
+    auxiliary.put("isdc:sprint:storypoints", null);
+    final ManiphestModule.TaskResult expected84 = new ManiphestModule.TaskResult(
+        84, "PHID-TASK-btorxi3333rmlvrqdzr7", "PHID-USER-3nphm6xkw2mpyfshq4dq",
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", Arrays.asList("cc1", "cc2"), "open",
+        "Open", false, "Needs Triage", "violet", "qchris-test-task", "foo",
+        new ArrayList<String>(), "https://phabricator.local/T84", auxiliary,
+        "T84", "1436304454", "1436304469", new ArrayList<String>());
+    assertEquals("Results for T84 do not match", expected84,
+        result.get("PHID-TASK-btorxi3333rmlvrqdzr7"));
+
+    auxiliary = new HashMap<String, String>();
+    auxiliary.put("std:maniphest:security_topic2", null);
+    auxiliary.put("isdc:sprint:storypoints2", null);
+    final ManiphestModule.TaskResult expected85 = new ManiphestModule.TaskResult(
+        85, "PHID-TASK-btorxi3333rmlvrqdzr8", "PHID-USER-3nphm6xkw2mpyfshq4dr",
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", Arrays.asList("cc1", "cc3"), "open",
+        "Open", false, "Needs Triage", "violet", "qchris-test-task", "foo",
+        new ArrayList<String>(), "https://phabricator.local/T85", auxiliary,
+        "T85", "1436304455", "1436304470", new ArrayList<String>());
+    assertEquals("Results for T85 do not match", expected85,
+        result.get("PHID-TASK-btorxi3333rmlvrqdzr8"));
+
+    final ManiphestModule.QueryResult expected = new ManiphestModule.QueryResult();
+    expected.put("PHID-TASK-btorxi3333rmlvrqdzr7", expected84);
+    expected.put("PHID-TASK-btorxi3333rmlvrqdzr8", expected85);
+
+    assertEquals("Results do not match", expected, result);
+  }
+
   @Override
   protected ManiphestModule getModule() {
     return new ManiphestModule(connection, sessionHandler);

@@ -863,4 +863,98 @@ public class ManiphestModule extends Module {
           + ", dependsOnTaskPHIDs=" + dependsOnTaskPHIDs + "]";
     }
   }
+
+  /**
+   * Runs the API's 'maniphest.query' method
+   */
+  public QueryResult query(final List<Integer> ids, final List<String> phids,
+      final List<String> ownerPhids, final List<String> authorPhids,
+      final List<String> projectPhids, final List<String> ccPhids,
+      final String fullText, final String status, final String order,
+      final Integer limit, final Integer offset) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("ids", ids);
+    params.put("phids", phids);
+    params.put("ownerPHIDs", ownerPhids);
+    params.put("authorPHIDs", authorPhids);
+    params.put("projectPHIDs", projectPhids);
+    params.put("ccPHIDs", ccPhids);
+    params.put("fullText", fullText);
+    params.put("status", status);
+    params.put("order", order);
+    params.put("limit", limit);
+    params.put("offset", offset);
+
+    final JsonElement callResult = connection.call("maniphest.query", params);
+    final QueryResult result = gson.fromJson(callResult, QueryResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to maniphest.query
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "PHID-TASK-mxb6ywkxbd5mhjjsitf4": {
+   *     "id": "89",
+   *     "phid": "PHID-TASK-mxb6ywkxbd5mhjjsitf4",
+   *     "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *     "ownerPHID": null,
+   *     "ccPHIDs": [
+   *       "PHID-USER-3nphm6xkw2mpyfshq4dq"
+   *     ],
+   *     "status": "open",
+   *     "statusName": "Open",
+   *     "isClosed": false,
+   *     "priority": "Low",
+   *     "priorityColor": "yellow",
+   *     "title": "qchris-test-task2",
+   *     "description": "description",
+   *     "projectPHIDs": [],
+   *     "uri": "https:\/\/phabricator.local\/T89",
+   *     "auxiliary": {
+   *       "std:maniphest:security_topic": null,
+   *       "isdc:sprint:storypoints": null
+   *     },
+   *     "objectName": "T89",
+   *     "dateCreated": "1436474174",
+   *     "dateModified": "1436474174",
+   *     "dependsOnTaskPHIDs": []
+   *   },
+   *   "PHID-TASK-k4d7asi554br34urlbt2": {
+   *     "id": "88",
+   *     "phid": "PHID-TASK-k4d7asi554br34urlbt2",
+   *     "authorPHID": "PHID-USER-3nphm6xkw2mpyfshq4dq",
+   *     "ownerPHID": null,
+   *     "ccPHIDs": [
+   *       "PHID-USER-3nphm6xkw2mpyfshq4dq"
+   *     ],
+   *     "status": "open",
+   *     "statusName": "Open",
+   *     "isClosed": false,
+   *     "priority": "Low",
+   *     "priorityColor": "yellow",
+   *     "title": "qchris-test-task2",
+   *     "description": "description",
+   *     "projectPHIDs": [],
+   *     "uri": "https:\/\/phabricator.local\/T88",
+   *     "auxiliary": {
+   *       "std:maniphest:security_topic": null,
+   *       "isdc:sprint:storypoints": null
+   *     },
+   *     "objectName": "T88",
+   *     "dateCreated": "1436473926",
+   *     "dateModified": "1436473926",
+   *     "dependsOnTaskPHIDs": []
+   *   },
+   *   [...]
+   * }
+   * </pre>
+   */
+  public static class QueryResult extends HashMap<String, TaskResult> {
+    private static final long serialVersionUID = 1L;
+  }
 }
