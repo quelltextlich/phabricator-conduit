@@ -49,6 +49,27 @@ public class UserModuleTest extends ModuleTestCase {
         params.get("phids"));
   }
 
+  public void testEnablePass() throws Exception {
+    final JsonNull ret = JsonNull.INSTANCE;
+
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    expect(connection.call(eq("user.enable"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final UserModule module = getModule();
+    module.enable(Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq",
+        "PHID-USER-3nphm6xkw2mpyfshq4dr"));
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertEquals("'phids' does not match in params", Arrays.asList(
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        params.get("phids"));
+  }
+
   public void testQueryPass() throws Exception {
     final JsonArray ret = new JsonArray();
 

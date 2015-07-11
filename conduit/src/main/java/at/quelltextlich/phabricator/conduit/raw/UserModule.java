@@ -45,6 +45,18 @@ public class UserModule extends Module {
   }
 
   /**
+   * Runs the API's 'user.enable' method
+   */
+  public void enable(final List<String> phids) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("phids", phids);
+
+    // 'user.enable' method does not yield data.
+    connection.call("user.enable", params);
+  }
+
+  /**
    * Runs the API's 'user.query' method
    */
   public QueryResult query(final List<String> usernames,
