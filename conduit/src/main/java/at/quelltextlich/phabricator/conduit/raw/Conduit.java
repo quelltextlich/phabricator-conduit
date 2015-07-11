@@ -27,14 +27,16 @@ public class Conduit {
   public final ManiphestModule maniphest;
   public final PhidModule phid;
   public final ProjectModule project;
+  public final UserModule user;
 
   public Conduit(final ConduitModule conduitModule,
       final ManiphestModule maniphestModule, final PhidModule phidModule,
-      final ProjectModule projectModule) {
+      final ProjectModule projectModule, final UserModule userModule) {
     conduit = conduitModule;
     maniphest = maniphestModule;
     phid = phidModule;
     project = projectModule;
+    user = userModule;
   }
 
   /**
@@ -71,5 +73,14 @@ public class Conduit {
    */
   public ProjectModule getProjectModule() {
     return project;
+  }
+
+  /**
+   * Gets the current UserModule
+   *
+   * @return Gets the current UserModule
+   */
+  public UserModule getUserModule() {
+    return user;
   }
 }

@@ -24,5 +24,6 @@ public class ConduitFactoryTest extends LoggingMockingTestCase {
     assertNotNull("maniphest module not initialized", conduit.maniphest);
     assertNotNull("phid module not initialized", conduit.phid);
     assertNotNull("project module not initialized", conduit.project);
+    assertNotNull("user module not initialized", conduit.user);
   }
 }

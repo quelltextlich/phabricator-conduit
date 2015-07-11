@@ -31,8 +31,9 @@ public class ConduitFactory {
     final PhidModule phidModule = new PhidModule(connection, sessionHandler);
     final ProjectModule projectModule = new ProjectModule(connection,
         sessionHandler);
+    final UserModule userModule = new UserModule(connection, sessionHandler);
 
     return new Conduit(conduitModule, maniphestModule, phidModule,
-        projectModule);
+        projectModule, userModule);
   }
 }
