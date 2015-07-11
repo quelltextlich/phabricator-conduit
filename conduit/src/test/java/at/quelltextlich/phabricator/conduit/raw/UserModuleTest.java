@@ -23,10 +23,32 @@ import java.util.Map;
 import org.easymock.Capture;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 public class UserModuleTest extends ModuleTestCase {
+  public void testDisablePass() throws Exception {
+    final JsonNull ret = JsonNull.INSTANCE;
+
+    final Capture<Map<String, Object>> paramsCapture = createCapture();
+
+    expect(connection.call(eq("user.disable"), capture(paramsCapture)))
+        .andReturn(ret).once();
+
+    replayMocks();
+
+    final UserModule module = getModule();
+    module.disable(Arrays.asList("PHID-USER-3nphm6xkw2mpyfshq4dq",
+        "PHID-USER-3nphm6xkw2mpyfshq4dr"));
+
+    final Map<String, Object> params = paramsCapture.getValue();
+    assertHasSessionKey(params);
+    assertEquals("'phids' does not match in params", Arrays.asList(
+        "PHID-USER-3nphm6xkw2mpyfshq4dq", "PHID-USER-3nphm6xkw2mpyfshq4dr"),
+        params.get("phids"));
+  }
+
   public void testQueryPass() throws Exception {
     final JsonArray ret = new JsonArray();
 

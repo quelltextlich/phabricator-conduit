@@ -33,6 +33,18 @@ public class UserModule extends Module {
   }
 
   /**
+   * Runs the API's 'user.disable' method
+   */
+  public void disable(final List<String> phids) throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("phids", phids);
+
+    // 'user.disable' method does not yield data.
+    connection.call("user.disable", params);
+  }
+
+  /**
    * Runs the API's 'user.query' method
    */
   public QueryResult query(final List<String> usernames,
