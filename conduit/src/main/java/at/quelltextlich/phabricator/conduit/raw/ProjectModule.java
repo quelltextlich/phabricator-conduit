@@ -263,4 +263,241 @@ public class ProjectModule extends Module {
           + "]";
     }
   }
+
+  /**
+   * Runs the API's 'project.query' method
+   */
+  public QueryResult query(final List<Integer> ids, final List<String> names,
+      final List<String> phids, final List<String> slugs,
+      final List<String> icons, final List<String> colors, final String status,
+      final List<String> members, final Integer limit, final Integer offset)
+      throws ConduitException {
+    final Map<String, Object> params = new HashMap<String, Object>();
+    sessionHandler.fillInSession(params);
+    params.put("ids", ids);
+    params.put("names", names);
+    params.put("phids", phids);
+    params.put("slugs", slugs);
+    params.put("icons", icons);
+    params.put("colors", colors);
+    params.put("status", status);
+    params.put("members", members);
+    params.put("limit", limit);
+    params.put("offset", offset);
+
+    final JsonElement callResult = connection.call("project.query", params);
+    final QueryResult result = gson.fromJson(callResult, QueryResult.class);
+    return result;
+  }
+
+  /**
+   * Models the result for a call to 'project.query'
+   * <p/>
+   * JSON looks like:
+   *
+   * <pre>
+   * {
+   *   "data": {
+   *     "PHID-PROJ-nwyto7vdzbt64o2oo5g4": {
+   *       "id": "21",
+   *       "phid": "PHID-PROJ-nwyto7vdzbt64o2oo5g4",
+   *       "name": "qchris-test",
+   *       "profileImagePHID": null,
+   *       "icon": "rocket",
+   *       "color": "red",
+   *       "members": [
+   *         "PHID-USER-3nphm6xkw2mpyfshq4dq"
+   *       ],
+   *       "slugs": [
+   *         "qchris-test",
+   *         "foo2",
+   *         "bar2",
+   *         "foo-bar2"
+   *       ],
+   *       "dateCreated": "1436622360",
+   *       "dateModified": "1436622432"
+   *     },
+   *     "PHID-PROJ-rvo2d6b4e6rghwr26wj3": {
+   *       "id": "18",
+   *       "phid": "PHID-PROJ-rvo2d6b4e6rghwr26wj3",
+   *       "name": "Software Architecture Documentation",
+   *       "profileImagePHID": null,
+   *       "icon": "briefcase",
+   *       "color": "blue",
+   *       "members": [
+   *         "PHID-USER-ehfjwew4vk54olwdagb2",
+   *         "PHID-USER-fuvfkcymy3moyww3frkv"
+   *       ],
+   *       "slugs": [
+   *         "documentation",
+   *         "mid-level-arch-doc",
+   *         "software_architecture_documentation"
+   *       ],
+   *       "dateCreated": "1432971485",
+   *       "dateModified": "1434958869"
+   *     }
+   *   },
+   *   "slugMap": [],
+   *   "cursor": {
+   *     "limit": 2,
+   *     "after": "18",
+   *     "before": null
+   *   }
+   * }
+   * </pre>
+   */
+  public static class QueryResult {
+    private final Map<String, ProjectResult> data;
+    private final Map<String, String> slugMap;
+    private final Cursor cursor;
+
+    public QueryResult(final Map<String, ProjectResult> data,
+        final Map<String, String> slugMap, final Cursor cursor) {
+      super();
+      this.data = data;
+      this.slugMap = slugMap;
+      this.cursor = cursor;
+    }
+
+    public Map<String, ProjectResult> getData() {
+      return data;
+    }
+
+    public Map<String, String> getSlugMap() {
+      return slugMap;
+    }
+
+    public Cursor getCursor() {
+      return cursor;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((cursor == null) ? 0 : cursor.hashCode());
+      result = prime * result + ((data == null) ? 0 : data.hashCode());
+      result = prime * result + ((slugMap == null) ? 0 : slugMap.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final QueryResult other = (QueryResult) obj;
+      if (cursor == null) {
+        if (other.cursor != null) {
+          return false;
+        }
+      } else if (!cursor.equals(other.cursor)) {
+        return false;
+      }
+      if (data == null) {
+        if (other.data != null) {
+          return false;
+        }
+      } else if (!data.equals(other.data)) {
+        return false;
+      }
+      if (slugMap == null) {
+        if (other.slugMap != null) {
+          return false;
+        }
+      } else if (!slugMap.equals(other.slugMap)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "QueryResult [data=" + data + ", slugMap=" + slugMap + ", cursor="
+          + cursor + "]";
+    }
+  }
+
+  public static class Cursor {
+    private final Integer limit;
+    private final String after;
+    private final String before;
+
+    public Cursor(final Integer limit, final String after, final String before) {
+      super();
+      this.limit = limit;
+      this.after = after;
+      this.before = before;
+    }
+
+    public Integer getLimit() {
+      return limit;
+    }
+
+    public String getAfter() {
+      return after;
+    }
+
+    public String getBefore() {
+      return before;
+    }
+
+    @Override
+    public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((after == null) ? 0 : after.hashCode());
+      result = prime * result + ((before == null) ? 0 : before.hashCode());
+      result = prime * result + ((limit == null) ? 0 : limit.hashCode());
+      return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj) {
+        return true;
+      }
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      final Cursor other = (Cursor) obj;
+      if (after == null) {
+        if (other.after != null) {
+          return false;
+        }
+      } else if (!after.equals(other.after)) {
+        return false;
+      }
+      if (before == null) {
+        if (other.before != null) {
+          return false;
+        }
+      } else if (!before.equals(other.before)) {
+        return false;
+      }
+      if (limit == null) {
+        if (other.limit != null) {
+          return false;
+        }
+      } else if (!limit.equals(other.limit)) {
+        return false;
+      }
+      return true;
+    }
+
+    @Override
+    public String toString() {
+      return "Cursor [limit=" + limit + ", after=" + after + ", before="
+          + before + "]";
+    }
+  }
 }
