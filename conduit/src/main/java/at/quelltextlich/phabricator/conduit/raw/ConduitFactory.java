@@ -32,8 +32,9 @@ public class ConduitFactory {
     final ProjectModule projectModule = new ProjectModule(connection,
         sessionHandler);
     final UserModule userModule = new UserModule(connection, sessionHandler);
+    final DifferentialModule differentialModule = new DifferentialModule(connection, sessionHandler);
 
     return new Conduit(conduitModule, maniphestModule, phidModule,
-        projectModule, userModule);
+        projectModule, userModule, differentialModule);
   }
 }

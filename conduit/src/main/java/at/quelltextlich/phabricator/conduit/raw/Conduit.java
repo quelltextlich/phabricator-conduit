@@ -28,15 +28,17 @@ public class Conduit {
   public final PhidModule phid;
   public final ProjectModule project;
   public final UserModule user;
+  public final DifferentialModule differential;
 
-  public Conduit(final ConduitModule conduitModule,
-      final ManiphestModule maniphestModule, final PhidModule phidModule,
-      final ProjectModule projectModule, final UserModule userModule) {
+  public Conduit(final ConduitModule conduitModule, final ManiphestModule maniphestModule,
+                 final PhidModule phidModule, final ProjectModule projectModule,
+                 final UserModule userModule, final DifferentialModule differentialModule) {
     conduit = conduitModule;
     maniphest = maniphestModule;
     phid = phidModule;
     project = projectModule;
     user = userModule;
+    differential = differentialModule;
   }
 
   /**
@@ -82,5 +84,14 @@ public class Conduit {
    */
   public UserModule getUserModule() {
     return user;
+  }
+
+  /**
+   * Gets the current DifferentialModule
+   *
+   * @return Gets the current DifferentialModule
+   */
+  public DifferentialModule getDifferentialModule() {
+    return differential;
   }
 }
